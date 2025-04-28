@@ -3,30 +3,50 @@ session_start();
 include '/xampp/htdocs/Project_Final/server.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $student_id = $_POST['student_id'];
-    $f_name = $_POST['f_name'];
-    $l_name = $_POST['l_name'];
-    $phone_number = $_POST['phone_number'];
-    $email = $_POST['email'];
+    $student_id = trim($_POST['student_id']);
+    $f_name = trim($_POST['f_name']);
+    $l_name = trim($_POST['l_name']);
+    $phone_number = trim($_POST['phone_number']);
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
+
+    // ตรวจสอบว่าฟิลด์ student_id ไม่ว่าง
+    if (empty($student_id)) {
+        echo "<script>alert('กรุณากรอกเลขบัตรประจำตัวประชาชน');</script>";
+        exit();
+    }
 
     // Validate passwords
     if ($password !== $confirm_password) {
         echo "<script>alert('รหัสผ่านไม่ตรงกัน');</script>";
     } else {
-        // Hash the password
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+        // ตรวจสอบว่ามี student_id ซ้ำหรือไม่
+        $check_sql = "SELECT * FROM student WHERE student_id = ?";
+        $stmt = $conn->prepare($check_sql);
+        $stmt->bind_param("s", $student_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        // Insert data into the database
-        $sql = "INSERT INTO student (student_id, f_name, l_name, phone_number, email, password) VALUES ('$student_id', '$f_name', '$l_name', '$phone_number', '$email', '$hashed_password')";
-
-        if ($conn->query($sql) === TRUE) {
-            echo "<script>alert('ลงทะเบียนสำเร็จ'); window.location.href='user_login.php';</script>";
+        if ($result->num_rows > 0) {
+            echo "<script>alert('เลขบัตรประจำตัวประชาชนนี้มีการลงทะเบียนแล้ว');</script>";
         } else {
-            echo "<script>alert('Error: " . $sql . "<br>" . $conn->error . "');</script>";
+            // Hash the password
+            $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+
+            // Insert data into the database
+            $sql = "INSERT INTO student (student_id, f_name, l_name, phone_number, email, password) VALUES (?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ssssss", $student_id, $f_name, $l_name, $phone_number, $email, $hashed_password);
+
+            if ($stmt->execute()) {
+                echo "<script>alert('ลงทะเบียนสำเร็จ'); window.location.href='user_login.php';</script>";
+            } else {
+                echo "<script>alert('เกิดข้อผิดพลาด: " . $stmt->error . "');</script>";
+            }
         }
 
+        $stmt->close();
         $conn->close();
     }
 }

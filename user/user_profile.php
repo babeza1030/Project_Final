@@ -8,10 +8,20 @@ if (!isset($_SESSION['username'])) {
 }
 
 $student_id = $_SESSION['username']; // Assuming username is actually student_id
-$sql = "SELECT student.*, father.father_name, father.father_last_name, mother.mother_name, mother.mother_last_name, father.father_id, father.father_address, father.father_occupation, father.father_income, mother.mother_id, mother.mother_address, mother.mother_occupation, mother.mother_income, father.father_phone_number, mother.mother_phone_number
+$sql = "SELECT 
+            student.*, 
+            father.father_name, father.father_last_name, 
+            mother.mother_name, mother.mother_last_name, 
+            father.father_id, father.father_address, father.father_occupation, father.father_income, 
+            mother.mother_id, mother.mother_address, mother.mother_occupation, mother.mother_income, 
+            father.father_phone_number, mother.mother_phone_number, 
+            endorsee.full_name AS endorsee_name, endorsee.address AS endorsee_address, endorsee.phone_number AS endorsee_phone_number, 
+            department.department_name
         FROM student 
         LEFT JOIN father ON student.father_id = father.father_id 
         LEFT JOIN mother ON student.mother_id = mother.mother_id 
+        LEFT JOIN endorsee ON student.endorser_id = endorsee.endorser_id
+        LEFT JOIN department ON student.department_id = department.department_id
         WHERE student.student_id = ?";
 $stmt = $conn->prepare($sql);
 
@@ -76,7 +86,9 @@ $conn->close();
 
     <div class="container" id="profile-container">
         <h2 class="title">ข้อมูลส่วนตัว</h2>
-        <p class="subtitle">ข้อมูลส่วนตัวของนักศึกษา</p>
+        <div class="info-row"><strong>รูปภาพ</strong> <span><img src="<?php echo htmlspecialchars($student["profile_image"]); ?>" alt="Profile Image" style="width: 100px; height: auto;"></span></div>
+
+        <!-- <p class="subtitle">ข้อมูลส่วนตัวของนักศึกษา</p> -->
 
         <!-- กล่องข้อมูลส่วนตัว -->
         <div class="info-card">
@@ -90,14 +102,20 @@ $conn->close();
                 <div class="info-row"><strong>ที่อยู่</strong> <span><?php echo htmlspecialchars($student["address"]); ?></span></div>
                 <div class="info-row"><strong>เบอร์โทรศัพท์</strong> <span><?php echo htmlspecialchars($student["phone_number"]); ?></span></div>
                 <div class="info-row"><strong>อีเมล</strong> <span><?php echo htmlspecialchars($student["email"]); ?></span></div>
-                <div class="info-row"><strong>Spouse ID</strong> <span><?php echo htmlspecialchars($student["spouse_id"]); ?></span></div>
+                <!-- <div class="info-row"><strong>Spouse ID</strong> <span><?php echo htmlspecialchars($student["spouse_id"]); ?></span></div> -->
                 <div class="info-row"><strong>เลขบัตรประจำตัวประชาชนบิดา</strong> <span><?php echo htmlspecialchars($student["father_id"]); ?></span></div>
                 <div class="info-row"><strong>เลขบัตรประจำตัวประชาชนมารดา</strong> <span><?php echo htmlspecialchars($student["mother_id"]); ?></span></div>
-                <div class="info-row"><strong>Guardian_ID</strong> <span><?php echo htmlspecialchars($student["guardian_id"]); ?></span></div>
-                <div class="info-row"><strong>Endorser_ID</strong> <span><?php echo htmlspecialchars($student["endorser_id"]); ?></span></div>
-                <div class="info-row"><strong>Department_ID</strong> <span><?php echo htmlspecialchars($student["department_id"]); ?></span></div>
-                <div class="info-row"><strong>Family_status_ID</strong> <span><?php echo htmlspecialchars($student["family_status"]); ?></span></div>
-
+                <!-- <div class="info-row"><strong>Guardian_ID</strong> <span><?php echo htmlspecialchars($student["guardian_id"]); ?></span></div> -->
+                <!-- <div class="info-row"><strong>Endorser_ID</strong> <span><?php echo htmlspecialchars($student["endorser_id"]); ?></span></div> -->
+                <!-- <div class="info-row"><strong>Department_ID</strong> <span><?php echo htmlspecialchars($student["department_id"]); ?></span></div> -->
+                <!-- <div class="info-row"><strong>Family_status_ID</strong> <span><?php echo htmlspecialchars($student["family_status"]); ?></span></div> -->
+                <div class="info-row"><strong>ชื่อผู้รับรอง</strong> <span><?php echo htmlspecialchars($student["endorsee_name"]); ?></span></div>
+                <div class="info-row"><strong>ที่อยู่ผู้รับรอง</strong> <span><?php echo htmlspecialchars($student["endorsee_address"]); ?></span></div>
+                <div class="info-row"><strong>เบอร์โทรศัพท์ผู้รับรอง</strong> <span><?php echo htmlspecialchars($student["endorsee_phone_number"]); ?></span></div>
+                <div class="info-row"><strong>ชื่อแผนก</strong> <span><?php echo htmlspecialchars($student["department_name"]); ?></span></div>
+                <div class="info-row"><strong>สถานภาพครอบครัว</strong> <span><?php echo htmlspecialchars($student["family_status"]); ?></span></div>
+                <!-- <div class="info-row"><strong>รหัสผ่าน</strong> <span><?php echo htmlspecialchars($student["password"]); ?></span></div> -->
+                
             </div>
             <a href="user_profile_process_1.php?student_id=<?php echo htmlspecialchars($student['student_id']); ?>" class="edit-btn">
                 <i class="bi bi-pencil-square"></i> แก้ไขข้อมูล
