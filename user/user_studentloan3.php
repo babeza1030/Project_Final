@@ -21,6 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_SESSION['username'];
     $activity_id = isset($_SESSION['selected_activity']['id']) ? $_SESSION['selected_activity']['id'] : null;
 
+    // คำนวณ start_date และ end_date
+    $start_date = date('Y-m-d'); // วันที่ปัจจุบัน
+    $end_date = date('Y-m-d', strtotime('+14 days', strtotime($start_date))); // +14 วันจาก start_date
+
     // Handle file upload
     $target_dir = "../uploads/";
     $target_file = $target_dir . basename($_FILES["activity_image"]["name"]);
@@ -41,8 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($uploadOk == 1) {
         if (move_uploaded_file($_FILES["activity_image"]["tmp_name"], $target_file)) {
-            $stmt = $conn->prepare("INSERT INTO new_user_activities (username, activity_id, activity_name, location, details, image_path) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("sissss", $username, $activity_id, $activity_name, $location, $details, $target_file);
+            $stmt = $conn->prepare("INSERT INTO new_user_activities (username, activity_id, activity_name, location, details, image_path, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("sissssss", $username, $activity_id, $activity_name, $location, $details, $target_file, $start_date, $end_date);
             if ($stmt->execute()) {
                 echo "<script>alert('บันทึกข้อมูลสำเร็จ'); window.location.href='user_studentloan1.php';</script>";
             } else {
