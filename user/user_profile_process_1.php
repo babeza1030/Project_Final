@@ -29,6 +29,19 @@ if (isset($_GET['student_id'])) {
     echo "ไม่มีการระบุ ID นักเรียน";
     exit();
 }
+
+if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+    $uploadDir = '/path/to/upload/directory/';
+    $uploadFile = $uploadDir . basename($_FILES['profile_image']['name']);
+
+    if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $uploadFile)) {
+        echo "File is valid and was successfully uploaded.\n";
+    } else {
+        echo "Possible file upload attack!\n";
+    }
+} else {
+    echo "No file uploaded or there was an error uploading the file.";
+}
 ?>
 
 <!DOCTYPE html>
@@ -173,7 +186,16 @@ if (isset($_GET['student_id'])) {
             </div>
             <div class="mb-3">
                 <label for="profile_image" class="form-label">Profile Image</label>
-                <input type="file" class="form-control" id="profile_image" name="profile_image" required>
+                <?php if (!empty($row['profile_image'])): ?>
+                    <div>
+                        <img src="<?php echo htmlspecialchars($row['profile_image']); ?>" alt="Profile Image" style="width: 100px; height: auto;">
+                    </div>
+                    <p>มีรูปภาพโปรไฟล์แล้ว</p>
+                <?php else: ?>
+                    <form action="user_profile_process_save1.php" method="POST" enctype="multipart/form-data">
+                        <input type="file" class="form-control" id="profile_image" name="profile_image">
+                    </form>
+                <?php endif; ?>
             </div>
             <div class="mb-3">
                 <label for="spouse_id" class="form-label">Spouse ID</label>
