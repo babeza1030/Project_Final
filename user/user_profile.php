@@ -112,7 +112,7 @@ $conn->close();
                 <div class="info-row"><strong>ชื่อผู้รับรอง</strong> <span><?php echo htmlspecialchars($student["endorsee_name"]); ?></span></div>
                 <div class="info-row"><strong>ที่อยู่ผู้รับรอง</strong> <span><?php echo htmlspecialchars($student["endorsee_address"]); ?></span></div>
                 <div class="info-row"><strong>เบอร์โทรศัพท์ผู้รับรอง</strong> <span><?php echo htmlspecialchars($student["endorsee_phone_number"]); ?></span></div>
-                <div class="info-row"><strong>ชื่อแผนก</strong> <span><?php echo htmlspecialchars($student["department_name"]); ?></span></div>
+                <div class="info-row"><strong>คณะสาขา</strong> <span><?php echo htmlspecialchars($student["department_name"]); ?></span></div>
                 <div class="info-row"><strong>สถานภาพครอบครัว</strong> <span><?php echo htmlspecialchars($student["family_status"]); ?></span></div>
                 <!-- <div class="info-row"><strong>รหัสผ่าน</strong> <span><?php echo htmlspecialchars($student["password"]); ?></span></div> -->
                 
