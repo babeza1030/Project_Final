@@ -39,6 +39,7 @@ $faculty_result = $conn->query($faculty_sql);
     <link rel="stylesheet" href="../static/css/bootstrap.css">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         /* ตั้งค่า Sidebar */
@@ -263,6 +264,52 @@ $faculty_result = $conn->query($faculty_sql);
             </tbody>
         </table>
     </div>
+
+    <div class="container mt-4">
+        <h2 class="text-center">สถิติข้อมูลนักศึกษา</h2>
+        <canvas id="studentChart" width="400" height="200"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const studentData = {
+            labels: ['คณะวิทยาศาสตร์', 'คณะวิศวกรรมศาสตร์', 'คณะบริหารธุรกิจ', 'คณะมนุษยศาสตร์'],
+            datasets: [{
+                label: 'จำนวนนักศึกษา',
+                data: [120, 150, 100, 80], // ตัวอย่างข้อมูล
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const config = {
+            type: 'bar',
+            data: studentData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        const studentChart = new Chart(
+            document.getElementById('studentChart'),
+            config
+        );
+    </script>
 
     <script>
         document.getElementById("searchInput").addEventListener("keyup", function() {

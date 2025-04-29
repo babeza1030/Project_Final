@@ -15,10 +15,11 @@ if ($conn->connect_error) {
 // เพิ่ม Debug: แสดงค่า $_SESSION['username']
 echo "Session username: " . htmlspecialchars($_SESSION['username']);
 
-// รับค่าปีจาก URL (GET)
+// รับค่าปีและเทอมจาก URL (GET)
 $selected_year = isset($_GET['year']) ? $_GET['year'] : '';
+$selected_term = isset($_GET['term']) ? $_GET['term'] : '';
 
-// ปรับ SQL Query เพื่อกรองข้อมูลตามปีที่เลือก
+// ปรับ SQL Query เพื่อกรองข้อมูลตามปีและเทอมที่เลือก
 $sql = "
     SELECT 
         nau.id, 
@@ -45,9 +46,11 @@ $sql = "
         nau.username = ?
 ";
 
-// เพิ่มเงื่อนไขกรองปี
 if (!empty($selected_year)) {
     $sql .= " AND YEAR(nau.start_date) = ?";
+}
+if (!empty($selected_term)) {
+    $sql .= " AND nau.terms = ?";
 }
 
 $sql .= " ORDER BY nau.created_at DESC";
@@ -61,8 +64,12 @@ if (!$stmt) {
 }
 
 // ผูกพารามิเตอร์
-if (!empty($selected_year)) {
+if (!empty($selected_year) && !empty($selected_term)) {
+    $stmt->bind_param("sss", $_SESSION['username'], $selected_year, $selected_term);
+} elseif (!empty($selected_year)) {
     $stmt->bind_param("ss", $_SESSION['username'], $selected_year);
+} elseif (!empty($selected_term)) {
+    $stmt->bind_param("ss", $_SESSION['username'], $selected_term);
 } else {
     $stmt->bind_param("s", $_SESSION['username']);
 }
@@ -77,7 +84,6 @@ $result = $stmt->get_result();
 $year_sql = "SELECT DISTINCT YEAR(start_date) AS year_start, YEAR(end_date) AS year_end FROM new_user_activities ORDER BY year_start DESC";
 $year_result = $conn->query($year_sql);
 
-// ตรวจสอบผลลัพธ์
 $years = [];
 if ($year_result->num_rows > 0) {
     while ($year_row = $year_result->fetch_assoc()) {
@@ -86,9 +92,25 @@ if ($year_result->num_rows > 0) {
             $years[] = $year_row['year_end'];
         }
     }
-    $years = array_unique($years); // ลบค่าที่ซ้ำกัน
-    rsort($years); // เรียงลำดับจากมากไปน้อย
+    $years = array_unique($years);
+    rsort($years);
 }
+
+// ดึงข้อมูลเทอมจากคอลัมน์ terms
+$term_sql = "SELECT DISTINCT terms FROM new_user_activities ORDER BY terms ASC";
+$term_result = $conn->query($term_sql);
+
+$terms = [];
+if ($term_result->num_rows > 0) {
+    while ($term_row = $term_result->fetch_assoc()) {
+        $terms[] = $term_row['terms'];
+    }
+}
+?>
+
+<?php
+// ดึงปีปัจจุบัน
+$current_year = date('Y');
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -285,9 +307,7 @@ if ($year_result->num_rows > 0) {
 </head>
 
 <body>
-
     <?php include('../user/header.php'); ?>
-
 
     <h1>กิจกรรมจิตสาธารณะ กยศ</h1>
 
@@ -296,30 +316,30 @@ if ($year_result->num_rows > 0) {
         <form>
             <label for="year">เลือกปี:</label>
             <select id="year" name="year">
-                <option value="">ทั้งหมด</option>
+                <option value="<?php echo htmlspecialchars($current_year); ?>" <?php echo ($selected_year == $current_year || empty($selected_year)) ? 'selected' : ''; ?>>
+                    <?php echo htmlspecialchars($current_year); ?>
+                </option>
                 <?php foreach ($years as $year): ?>
-                    <option value="<?php echo htmlspecialchars($year); ?>" <?php echo ($selected_year == $year) ? 'selected' : ''; ?>>
-                        <?php echo htmlspecialchars($year); ?>
-                    </option>
+                    <?php if ($year != $current_year): // ไม่แสดงปีปัจจุบันซ้ำ ?>
+                        <option value="<?php echo htmlspecialchars($year); ?>" <?php echo ($selected_year == $year) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($year); ?>
+                        </option>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </select>
 
             <label for="term">เลือกเทอม:</label>
             <select id="term" name="term">
                 <option value="">ทั้งหมด</option>
-                <option value="1">เทอม 1</option>
-                <option value="2">เทอม 2</option>
+                <?php foreach ($terms as $term): ?>
+                    <option value="<?php echo htmlspecialchars($term); ?>" <?php echo ($selected_term == $term) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($term); ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
 
             <button type="submit">กรองข้อมูล</button>
         </form>
-    </div>
-
-    <!-- ปุ่มส่งแบบฟอร์มจิตอาสา -->
-    <div class="volunteer-button-container">
-        <button type="button" onclick="location.href='user_studentloan2.php'" class="volunteer-button">
-            ส่งแบบฟอร์มจิตอาสา
-        </button>
     </div>
 
     <!-- Main Content -->
@@ -335,11 +355,12 @@ if ($year_result->num_rows > 0) {
             </thead>
             <tbody>
                 <?php
-                $total_hours = 0; // กำหนดค่าเริ่มต้นให้ตัวแปรรวมชั่วโมงทั้งหมด
+                $total_hours = 0;
 
                 if ($result->num_rows > 0) {
-                    $count = 1; // ตัวนับลำดับ
+                    $count = 1;
                     while ($row = $result->fetch_assoc()) {
+                        echo "<tr>";
                         echo "<td>" . htmlspecialchars($count) . "</td>";
                         echo "<td>" . htmlspecialchars($row["activity_name"]) . "</td>";
                         echo "<td>" . htmlspecialchars($row["max_hours"]) . "</td>";
@@ -349,14 +370,18 @@ if ($year_result->num_rows > 0) {
                         $count++;
                     }
                 } else {
-                    echo "<tr><td colspan='5'>ไม่มีข้อมูลกิจกรรม</td></tr>";
+                    echo "<tr><td colspan='4'>ไม่มีข้อมูลกิจกรรม</td></tr>";
                 }
                 ?>
             </tbody>
             <tfoot>
                 <tr>
                     <td colspan="3">รวมชั่วโมงทั้งหมด:</td>
-                    <td><strong><?php echo htmlspecialchars($total_hours); ?></strong></td>
+                    <td>
+                        <strong style="color: <?php echo ($total_hours > 36) ? 'red' : 'black'; ?>;">
+                            <?php echo htmlspecialchars($total_hours); ?>
+                        </strong>
+                    </td>
                 </tr>
             </tfoot>
         </table>
@@ -367,6 +392,13 @@ if ($year_result->num_rows > 0) {
             const selectedYear = this.value;
             const url = new URL(window.location.href);
             url.searchParams.set('year', selectedYear);
+            window.location.href = url.toString();
+        });
+
+        document.getElementById('term').addEventListener('change', function () {
+            const selectedTerm = this.value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('term', selectedTerm);
             window.location.href = url.toString();
         });
     </script>
