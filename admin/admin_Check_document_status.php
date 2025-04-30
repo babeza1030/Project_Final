@@ -73,16 +73,18 @@ if (!empty($selected_year)) {
 
 // เพิ่มเงื่อนไขกรองเทอม
 if (!empty($selected_term)) {
-    $sql .= " AND nau.term = ?";
+    $sql .= " AND nau.terms = ?"; // ใช้ชื่อคอลัมน์ที่ถูกต้อง
     $params[] = $selected_term;
     $types .= "s";
 }
 
-// เพิ่มเงื่อนไขกรอง username
+// เพิ่มเงื่อนไขกรองชื่อผู้ใช้, ชื่อ, และนามสกุล
 if (!empty($_GET['username'])) {
-    $sql .= " AND nau.username LIKE ?";
+    $sql .= " AND (nau.username LIKE ? OR stu.f_name LIKE ? OR stu.l_name LIKE ?)";
     $params[] = '%' . $_GET['username'] . '%';
-    $types .= "s";
+    $params[] = '%' . $_GET['username'] . '%';
+    $params[] = '%' . $_GET['username'] . '%';
+    $types .= "sss";
 }
 
 // รับค่าจาก URL
@@ -460,15 +462,32 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
                         </select>
                     </div>
 
-                    <!-- เลือกเทอม -->
-                    <div class="col-md-3">
-                        <label for="term" class="form-label">เทอม:</label>
-                        <select name="term" id="term" class="form-control">
-                            <option value="">-- เลือกเทอม --</option>
-                            <option value="1" <?php echo ($selected_term == '1') ? 'selected' : ''; ?>>1</option>
-                            <option value="2" <?php echo ($selected_term == '2') ? 'selected' : ''; ?>>2</option>
-                        </select>
-                    </div>
+                    <!-- ดึงข้อมูลเทอมจากคอลัมน์ terms -->
+<?php
+// ดึงข้อมูลเทอมจากคอลัมน์ terms
+$term_sql = "SELECT DISTINCT terms FROM new_user_activities ORDER BY terms ASC";
+$term_result = $conn->query($term_sql);
+
+$terms = [];
+if ($term_result->num_rows > 0) {
+    while ($term_row = $term_result->fetch_assoc()) {
+        $terms[] = $term_row['terms'];
+    }
+}
+?>
+
+<!-- ส่วนฟอร์มเลือกเทอม -->
+<div class="col-md-3">
+    <label for="term" class="form-label">เทอม:</label>
+    <select name="term" id="term" class="form-control">
+        <option value="">-- เลือกเทอม --</option>
+        <?php foreach ($terms as $term): ?>
+            <option value="<?php echo htmlspecialchars($term); ?>" <?php echo ($selected_term == $term) ? 'selected' : ''; ?>>
+                <?php echo htmlspecialchars($term); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</div>
 
                     <!-- ค้นหาชื่อผู้ใช้ -->
                     <div class="col-md-4">
@@ -593,7 +612,14 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
         });
 
         document.getElementById('term').addEventListener('change', function () {
-            updateFilters();
+            const selectedTerm = this.value;
+            const url = new URL(window.location.href);
+            if (selectedTerm) {
+                url.searchParams.set('term', selectedTerm);
+            } else {
+                url.searchParams.delete('term');
+            }
+            window.location.href = url.toString();
         });
 
         function updateFilters() {

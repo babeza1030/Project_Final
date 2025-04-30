@@ -197,41 +197,55 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPL
                     </form>
                 <?php endif; ?>
             </div>
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label for="spouse_id" class="form-label">Spouse ID</label>
                 <input type="text" class="form-control" id="spouse_id" name="spouse_id"
                     value="<?php echo htmlspecialchars($row['spouse_id']); ?>" required>
-            </div>
-            <div class="mb-3">
+            </div> -->
+            <!-- <div class="mb-3">
                 <label for="father_id" class="form-label">Father ID</label>
                 <input type="text" class="form-control" id="father_id" name="father_id"
                     value="<?php echo htmlspecialchars($row['father_id']); ?>" required>
-            </div>
-            <div class="mb-3">
+            </div> -->
+            <!-- <div class="mb-3">
                 <label for="mother_id" class="form-label">Mother ID</label>
                 <input type="text" class="form-control" id="mother_id" name="mother_id"
                     value="<?php echo htmlspecialchars($row['mother_id']); ?>" required>
-            </div>
-            <div class="mb-3">
+            </div> -->
+            <!-- <div class="mb-3">
                 <label for="guardian_id" class="form-label">Guardian ID</label>
                 <input type="text" class="form-control" id="guardian_id" name="guardian_id"
                     value="<?php echo htmlspecialchars($row['guardian_id']); ?>" required>
-            </div>
-            <div class="mb-3">
+            </div> -->
+            <!-- <div class="mb-3">
                 <label for="endorser_id" class="form-label">Endorser ID</label>
                 <input type="text" class="form-control" id="endorser_id" name="endorser_id"
                     value="<?php echo htmlspecialchars($row['endorser_id']); ?>" required>
+            </div> -->
+            <div class="mb-3">
+                <label for="s_faculty" class="form-label">คณะ</label>
+                <select class="form-control" id="s_faculty" name="s_faculty" required>
+                    <option value="">-- เลือกคณะ --</option>
+                    <option value="1" <?php echo ($row['s_faculty'] == 1) ? 'selected' : ''; ?>>คณะวิศวกรรมศาสตร์</option>
+                    <option value="2" <?php echo ($row['s_faculty'] == 2) ? 'selected' : ''; ?>>คณะบริหารธุรกิจ</option>
+                    <option value="3" <?php echo ($row['s_faculty'] == 3) ? 'selected' : ''; ?>>คณะบัญชี</option>
+                </select>
             </div>
             <div class="mb-3">
-                <label for="department_id" class="form-label">Department ID</label>
-                <input type="text" class="form-control" id="department_id" name="department_id"
-                    value="<?php echo htmlspecialchars($row['department_id']); ?>" required>
+                <label for="s_department" class="form-label">สาขา</label>
+                <select class="form-control" id="s_department" name="s_department" required>
+                    <option value="">-- เลือกสาขา --</option>
+                    <option value="1" <?php echo ($row['s_department'] == 1) ? 'selected' : ''; ?>>วิศวกรรมคอมพิวเตอร์</option>
+                    <option value="2" <?php echo ($row['s_department'] == 2) ? 'selected' : ''; ?>>วิศวกรรมเครื่องกล</option>
+                    <option value="3" <?php echo ($row['s_department'] == 3) ? 'selected' : ''; ?>>การจัดการธุรกิจ</option>
+                    <option value="4" <?php echo ($row['s_department'] == 4) ? 'selected' : ''; ?>>การบัญชี</option>
+                </select>
             </div>
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label for="family_status_id" class="form-label">Family Status ID</label>
                 <input type="text" class="form-control" id="family_status_id" name="family_status_id"
                     value="<?php echo htmlspecialchars($row['family_status_id']); ?>" required>
-            </div>
+            </div> -->
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" name="password" required>
