@@ -85,6 +85,16 @@ if (!empty($_GET['username'])) {
     $types .= "s";
 }
 
+// รับค่าจาก URL
+$status_filter = isset($_GET['status']) ? $_GET['status'] : '';
+
+// เพิ่มตัวกรองสถานะใน SQL Query
+if ($status_filter === 'checked' || $status_filter === 'unchecked') {
+    $sql .= " AND nau.status = ?";
+    $params[] = $status_filter;
+    $types .= "s";
+}
+
 $sql .= " ORDER BY nau.created_at DESC";
 
 // เตรียมคำสั่ง SQL
@@ -105,6 +115,16 @@ $stmt->execute();
 
 // ดึงผลลัพธ์
 $result = $stmt->get_result();
+
+// Query สำหรับนับเอกสารที่ตรวจแล้วและยังไม่ตรวจ
+$checked_count_sql = "SELECT COUNT(*) AS checked_count FROM new_user_activities WHERE status = 'checked'";
+$unchecked_count_sql = "SELECT COUNT(*) AS unchecked_count FROM new_user_activities WHERE status = 'unchecked'";
+
+$checked_count_result = $conn->query($checked_count_sql);
+$unchecked_count_result = $conn->query($unchecked_count_sql);
+
+$checked_count = $checked_count_result->fetch_assoc()['checked_count'] ?? 0;
+$unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 0;
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -146,27 +166,27 @@ $result = $stmt->get_result();
         }
 
         .filters {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .filters form {
-            margin-left: auto; /* ดันฟอร์มไปด้านขวา */
-            display: flex;
-            align-items: center;
+        .filters .form-label {
+            font-weight: bold;
+            color: #495057;
         }
 
-        .filters input[type="text"] {
-            padding: 5px;
-            border: 1px solid #ced4da;
+        .filters .form-control {
             border-radius: 4px;
             font-size: 1rem;
         }
 
-        .filters button {
-            margin-left: 10px;
+        .filters .btn-primary {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
         }
 
         .table {
@@ -314,6 +334,68 @@ $result = $stmt->get_result();
             height: auto;
             margin-top: 10px;
         }
+
+        .card-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* ปรับ Card */
+        .card {
+            border: none; /* ลบขอบของ Card */
+            border-radius: 8px; /* มุมโค้งมน */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เงาเพื่อเพิ่มความลึก */
+        }
+
+        .card-body {
+            padding: 20px; /* ระยะห่างภายใน Card */
+        }
+
+        .card-title {
+            font-size: 1.5rem; /* ขนาดตัวอักษรใหญ่ */
+            font-weight: bold; /* ตัวอักษรหนา */
+        }
+
+        .card-text {
+            font-size: 2.5rem; /* ขนาดตัวอักษรใหญ่สำหรับจำนวนเอกสาร */
+            margin-bottom: 10px; /* ระยะห่างระหว่างจำนวนเอกสารกับคำอธิบาย */
+        }
+
+        .text-muted {
+            font-size: 0.9rem; /* ขนาดตัวอักษรเล็กสำหรับคำอธิบาย */
+            color: rgba(255, 255, 255, 0.7); /* สีอ่อนๆ สำหรับคำอธิบาย */
+        }
+
+        .btn-details {
+            background-color: #17a2b8; /* สีฟ้า */
+            color: #ffffff; /* สีตัวอักษร */
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-details:hover {
+            background-color: #138496; /* สีฟ้าเข้มขึ้นเมื่อ hover */
+            transform: scale(1.05); /* ขยายเล็กน้อยเมื่อ hover */
+        }
+
+        .btn-details:active {
+            background-color: #117a8b; /* สีเข้มขึ้นเมื่อคลิก */
+            transform: scale(0.95); /* ย่อเล็กน้อยเมื่อคลิก */
+        }
+
+        .card-selected {
+    transform: scale(1.05); /* ขยาย Card ขึ้น 5% */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* เพิ่มเงา */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* เพิ่มเอฟเฟกต์การเปลี่ยนแปลง */
+}
     </style>
 </head>
 
@@ -322,31 +404,84 @@ $result = $stmt->get_result();
         <h2 class="text-center">ตรวจสอบเอกสารจิตอาสา</h2>
         <p class="text-center">ข้อมูลเอกสารที่ส่งเข้ามาในระบบ</p>
 
-        <div class="filters mb-3">
-            <label for="year">ปี:</label>
-            <select id="year" name="year">
-                <option value="">ทั้งหมด</option>
-                <?php foreach ($years as $year): ?>
-                    <option value="<?php echo htmlspecialchars($year); ?>" <?php echo ($selected_year == $year) ? 'selected' : ''; ?>>
-                        <?php echo htmlspecialchars($year); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+        <!-- Cards -->
+        <div class="row mb-4">
+            <!-- Card: ยังไม่ตรวจ -->
+            <div class="col-md-6">
+                <div class="card text-center bg-warning text-white <?php echo (isset($_GET['status']) && $_GET['status'] === 'unchecked') ? 'card-selected' : ''; ?>" onclick="window.location.href='?status=unchecked'">
+                    <div class="card-body">
+                        <h5 class="card-title">ยังไม่ตรวจ</h5>
+                        <h3 class="card-text">
+                            <?php
+                            $unchecked_sql = "SELECT COUNT(*) AS total_unchecked FROM new_user_activities WHERE status = 'unchecked'";
+                            $unchecked_result = $conn->query($unchecked_sql);
+                            $total_unchecked = $unchecked_result->fetch_assoc()['total_unchecked'] ?? 0;
+                            echo $total_unchecked . " รายการ";
+                            ?>
+                        </h3>
+                        <small class="text-muted">เอกสารที่ยังไม่ได้รับการตรวจสอบ</small>
+                    </div>
+                </div>
+            </div>
 
-            <label for="term">เทอม:</label>
-            <select id="term" name="term">
-                <option value="">ทั้งหมด</option>
-                <option value="1" <?php echo ($selected_term == '1') ? 'selected' : ''; ?>>เทอม 1</option>
-                <option value="2" <?php echo ($selected_term == '2') ? 'selected' : ''; ?>>เทอม 2</option>
-            </select>
+            <!-- Card: ตรวจแล้ว -->
+            <div class="col-md-6">
+                <div class="card text-center bg-success text-white <?php echo (isset($_GET['status']) && $_GET['status'] === 'checked') ? 'card-selected' : ''; ?>" onclick="window.location.href='?status=checked'">
+                    <div class="card-body">
+                        <h5 class="card-title">ตรวจแล้ว</h5>
+                        <h3 class="card-text">
+                            <?php
+                            $checked_sql = "SELECT COUNT(*) AS total_checked FROM new_user_activities WHERE status = 'checked'";
+                            $checked_result = $conn->query($checked_sql);
+                            $total_checked = $checked_result->fetch_assoc()['total_checked'] ?? 0;
+                            echo $total_checked . " รายการ";
+                            ?>
+                        </h3>
+                        <small class="text-muted">เอกสารที่ได้รับการตรวจสอบแล้ว</small>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <!-- ฟอร์มค้นหา -->
-            <form method="GET" action="" style="margin-left: auto; display: flex; align-items: center;">
-                <input type="text" name="username" id="username" placeholder="ค้นหา username" 
-                       value="<?php echo isset($_GET['username']) ? htmlspecialchars($_GET['username']) : ''; ?>" 
-                       style="padding: 5px; border: 1px solid #ced4da; border-radius: 4px; font-size: 1rem;">
-                <button type="submit" class="btn btn-primary" style="margin-left: 10px;">ค้นหา</button>
-            </form>
+        <!-- Filters -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <form method="GET" action="" class="row g-3 align-items-end">
+                    <!-- เลือกปี -->
+                    <div class="col-md-3">
+                        <label for="year" class="form-label">ปี:</label>
+                        <select name="year" id="year" class="form-control">
+                            <option value="">-- เลือกปี --</option>
+                            <?php foreach ($years as $year): ?>
+                                <option value="<?php echo $year; ?>" <?php echo ($selected_year == $year) ? 'selected' : ''; ?>>
+                                    <?php echo $year; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <!-- เลือกเทอม -->
+                    <div class="col-md-3">
+                        <label for="term" class="form-label">เทอม:</label>
+                        <select name="term" id="term" class="form-control">
+                            <option value="">-- เลือกเทอม --</option>
+                            <option value="1" <?php echo ($selected_term == '1') ? 'selected' : ''; ?>>1</option>
+                            <option value="2" <?php echo ($selected_term == '2') ? 'selected' : ''; ?>>2</option>
+                        </select>
+                    </div>
+
+                    <!-- ค้นหาชื่อผู้ใช้ -->
+                    <div class="col-md-4">
+                        <label for="username" class="form-label">ชื่อผู้ใช้:</label>
+                        <input type="text" name="username" id="username" class="form-control" placeholder="ค้นหาชื่อผู้ใช้" value="<?php echo htmlspecialchars($_GET['username'] ?? ''); ?>">
+                    </div>
+
+                    <!-- ปุ่มค้นหา -->
+                    <div class="col-md-2 text-end">
+                        <button type="submit" class="btn btn-primary w-100">ค้นหา</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <table class="table table-bordered">
@@ -356,30 +491,26 @@ $result = $stmt->get_result();
                     <th>ชื่อผู้ใช้</th>
                     <th>ชื่อ-นามสกุล</th>
                     <th>ชื่อจิตกรรม</th>
+                    <th>ชั่วโมงสูงสุด</th> <!-- เพิ่มคอลัมน์นี้ -->
                     <th>ชั่วโมงที่ทำได้</th>
                     <th>ดูรายละเอียด</th>
-                    <th>เพิ่มคะแนน</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
                 if ($result->num_rows > 0) {
-                    $count = 1; // ตัวนับลำดับ
+                    $count = 1; // ตัวนับลำดับเริ่มต้นที่ 1
                     while ($row = $result->fetch_assoc()) {
                         echo "<tr>";
-                        echo "<td>" . htmlspecialchars($count) . "</td>";
-                        echo "<td>" . htmlspecialchars($row["username"]) . "</td>";
-                        echo "<td>" . htmlspecialchars($row["f_name"] . " " . $row["l_name"]) . "</td>";
-                        echo "<td>" . htmlspecialchars($row["activity_name"]) . "</td>";
-                        echo "<td>" . htmlspecialchars($row["hours_completed"]) . "</td>";
-                        echo "<td>
-                                <button class='btn btn-primary' onclick='viewDetails(" . json_encode($row) . ")'>ดูรายละเอียด</button>
-                              </td>";
-                        echo "<td>
-                                <button class='btn btn-score' onclick='giveScore(\"" . htmlspecialchars($row["username"]) . "\")'>เพิ่มคะแนน</button>
-                              </td>";
+                        echo "<td>" . htmlspecialchars($count) . "</td>"; // ใช้ตัวนับลำดับแทน ID
+                        echo "<td>" . htmlspecialchars($row['username']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['f_name'] . " " . $row['l_name']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['activity_name']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['max_hours']) . "</td>"; // เพิ่มชั่วโมงสูงสุด
+                        echo "<td>" . htmlspecialchars($row['hours_completed']) . "</td>";
+                        echo "<td><button class='btn btn-details' onclick='viewDetails(" . json_encode($row) . ")'>ดูรายละเอียด</button></td>";
                         echo "</tr>";
-                        $count++;
+                        $count++; // เพิ่มค่าตัวนับลำดับ
                     }
                 } else {
                     echo "<tr><td colspan='7' class='text-center'>ไม่มีข้อมูลกิจกรรม</td></tr>";
@@ -403,7 +534,13 @@ $result = $stmt->get_result();
         <p><strong>วันที่สร้าง:</strong> <span id="modal-created-at"></span></p>
         <p><strong>รูปภาพ:</strong></p>
         <img id="modal-image" src="" alt="Activity Image" style="display: none;">
-        <button onclick="closeModal()" class="btn btn-secondary">ปิด</button>
+
+        <!-- ปุ่มเพิ่มคะแนน -->
+        <div class="mt-3">
+            <button onclick="giveScoreInModal()" class="btn btn-score">เพิ่มคะแนน</button>
+        </div>
+
+        <button onclick="closeModal()" class="btn btn-secondary mt-3">ปิด</button>
     </div>
 </div>
 
@@ -414,7 +551,8 @@ $result = $stmt->get_result();
             }
         }
 
-        function giveScore(username) {
+        function giveScoreInModal() {
+            const username = document.getElementById('modal-username').innerText;
             const h_hours = prompt("กรุณากรอกคะแนน (0-100):");
             if (h_hours !== null && !isNaN(h_hours) && h_hours >= 0 && h_hours <= 100) {
                 window.location.href = `give_score.php?username=${encodeURIComponent(username)}&h_hours=${h_hours}`;
