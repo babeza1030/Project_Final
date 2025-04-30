@@ -15,11 +15,17 @@ if ($conn->connect_error) {
 // เพิ่ม Debug: แสดงค่า $_SESSION['username']
 echo "Session username: " . htmlspecialchars($_SESSION['username']);
 
-// รับค่าปีและเทอมจาก URL (GET)
-$selected_year = isset($_GET['year']) ? $_GET['year'] : '';
-$selected_term = isset($_GET['term']) ? $_GET['term'] : '';
+// รับค่าปีจาก URL (GET)
+$selected_year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 
-// ปรับ SQL Query เพื่อกรองข้อมูลตามปีและเทอมที่เลือก
+// กำหนดเทอมปัจจุบัน (สมมติว่าเทอม 1 คือเดือน 1-6 และเทอม 2 คือเดือน 7-12)
+$current_month = date('n'); // ดึงเดือนปัจจุบัน (1-12)
+$current_term = ($current_month >= 1 && $current_month <= 6) ? '1' : '2';
+
+// รับค่า terms จาก URL (GET) หรือใช้เทอมปัจจุบันเป็นค่าเริ่มต้น
+$selected_terms = isset($_GET['terms']) ? $_GET['terms'] : $current_term;
+
+// ปรับ SQL Query เพื่อกรองข้อมูลตามปีที่เลือก
 $sql = "
     SELECT 
         nau.id, 
@@ -46,10 +52,12 @@ $sql = "
         nau.username = ?
 ";
 
+// เพิ่มเงื่อนไขกรองปี
 if (!empty($selected_year)) {
     $sql .= " AND YEAR(nau.start_date) = ?";
 }
-if (!empty($selected_term)) {
+
+if (!empty($selected_terms)) {
     $sql .= " AND nau.terms = ?";
 }
 
@@ -64,12 +72,12 @@ if (!$stmt) {
 }
 
 // ผูกพารามิเตอร์
-if (!empty($selected_year) && !empty($selected_term)) {
-    $stmt->bind_param("sss", $_SESSION['username'], $selected_year, $selected_term);
+if (!empty($selected_year) && !empty($selected_terms)) {
+    $stmt->bind_param("sss", $_SESSION['username'], $selected_year, $selected_terms);
 } elseif (!empty($selected_year)) {
     $stmt->bind_param("ss", $_SESSION['username'], $selected_year);
-} elseif (!empty($selected_term)) {
-    $stmt->bind_param("ss", $_SESSION['username'], $selected_term);
+} elseif (!empty($selected_terms)) {
+    $stmt->bind_param("ss", $_SESSION['username'], $selected_terms);
 } else {
     $stmt->bind_param("s", $_SESSION['username']);
 }
@@ -84,6 +92,7 @@ $result = $stmt->get_result();
 $year_sql = "SELECT DISTINCT YEAR(start_date) AS year_start, YEAR(end_date) AS year_end FROM new_user_activities ORDER BY year_start DESC";
 $year_result = $conn->query($year_sql);
 
+// ตรวจสอบผลลัพธ์
 $years = [];
 if ($year_result->num_rows > 0) {
     while ($year_row = $year_result->fetch_assoc()) {
@@ -92,25 +101,33 @@ if ($year_result->num_rows > 0) {
             $years[] = $year_row['year_end'];
         }
     }
-    $years = array_unique($years);
-    rsort($years);
+    $years = array_unique($years); // ลบค่าที่ซ้ำกัน
+    rsort($years); // เรียงลำดับจากมากไปน้อย
+}
+$current_year = date('Y');
+if (!in_array($current_year, $years)) {
+    $years[] = $current_year;
+}
+rsort($years); // เรียงลำดับจากมากไปน้อย
+
+// ดึงค่า terms จากตาราง new_user_activities
+$terms_sql = "SELECT DISTINCT terms FROM new_user_activities WHERE username = ?";
+$terms_stmt = $conn->prepare($terms_sql);
+
+if (!$terms_stmt) {
+    die("Error preparing terms SQL: " . $conn->error);
 }
 
-// ดึงข้อมูลเทอมจากคอลัมน์ terms
-$term_sql = "SELECT DISTINCT terms FROM new_user_activities ORDER BY terms ASC";
-$term_result = $conn->query($term_sql);
+$terms_stmt->bind_param("s", $_SESSION['username']);
+$terms_stmt->execute();
+$terms_result = $terms_stmt->get_result();
 
 $terms = [];
-if ($term_result->num_rows > 0) {
-    while ($term_row = $term_result->fetch_assoc()) {
-        $terms[] = $term_row['terms'];
+if ($terms_result->num_rows > 0) {
+    while ($row = $terms_result->fetch_assoc()) {
+        $terms[] = $row['terms'];
     }
 }
-?>
-
-<?php
-// ดึงปีปัจจุบัน
-$current_year = date('Y');
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -307,7 +324,9 @@ $current_year = date('Y');
 </head>
 
 <body>
+
     <?php include('../user/header.php'); ?>
+
 
     <h1>กิจกรรมจิตสาธารณะ กยศ</h1>
 
@@ -316,23 +335,20 @@ $current_year = date('Y');
         <form>
             <label for="year">เลือกปี:</label>
             <select id="year" name="year">
-                <option value="<?php echo htmlspecialchars($current_year); ?>" <?php echo ($selected_year == $current_year || empty($selected_year)) ? 'selected' : ''; ?>>
-                    <?php echo htmlspecialchars($current_year); ?>
-                </option>
+                <option value="">ทั้งหมด</option>
                 <?php foreach ($years as $year): ?>
-                    <?php if ($year != $current_year): // ไม่แสดงปีปัจจุบันซ้ำ ?>
-                        <option value="<?php echo htmlspecialchars($year); ?>" <?php echo ($selected_year == $year) ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($year); ?>
-                        </option>
-                    <?php endif; ?>
+                    <option value="<?php echo htmlspecialchars($year); ?>" <?php echo ($selected_year == $year) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($year); ?>
+                    </option>
                 <?php endforeach; ?>
             </select>
 
-            <label for="term">เลือกเทอม:</label>
-            <select id="term" name="term">
+            <!-- แสดงตัวเลือก terms -->
+            <label for="terms">เลือกเทอม:</label>
+            <select id="terms" name="terms">
                 <option value="">ทั้งหมด</option>
                 <?php foreach ($terms as $term): ?>
-                    <option value="<?php echo htmlspecialchars($term); ?>" <?php echo ($selected_term == $term) ? 'selected' : ''; ?>>
+                    <option value="<?php echo htmlspecialchars($term); ?>" <?php echo ($selected_terms == $term) ? 'selected' : ''; ?>>
                         <?php echo htmlspecialchars($term); ?>
                     </option>
                 <?php endforeach; ?>
@@ -340,6 +356,13 @@ $current_year = date('Y');
 
             <button type="submit">กรองข้อมูล</button>
         </form>
+    </div>
+
+    <!-- ปุ่มส่งแบบฟอร์มจิตอาสา -->
+    <div class="volunteer-button-container">
+        <button type="button" onclick="location.href='user_studentloan2.php'" class="volunteer-button">
+            ส่งแบบฟอร์มจิตอาสา
+        </button>
     </div>
 
     <!-- Main Content -->
@@ -355,12 +378,11 @@ $current_year = date('Y');
             </thead>
             <tbody>
                 <?php
-                $total_hours = 0;
+                $total_hours = 0; // กำหนดค่าเริ่มต้นให้ตัวแปรรวมชั่วโมงทั้งหมด
 
                 if ($result->num_rows > 0) {
-                    $count = 1;
+                    $count = 1; // ตัวนับลำดับ
                     while ($row = $result->fetch_assoc()) {
-                        echo "<tr>";
                         echo "<td>" . htmlspecialchars($count) . "</td>";
                         echo "<td>" . htmlspecialchars($row["activity_name"]) . "</td>";
                         echo "<td>" . htmlspecialchars($row["max_hours"]) . "</td>";
@@ -370,24 +392,21 @@ $current_year = date('Y');
                         $count++;
                     }
                 } else {
-                    echo "<tr><td colspan='4'>ไม่มีข้อมูลกิจกรรม</td></tr>";
+                    echo "<tr><td colspan='5'>ไม่มีข้อมูลกิจกรรม</td></tr>";
                 }
                 ?>
             </tbody>
             <tfoot>
                 <tr>
                     <td colspan="3">รวมชั่วโมงทั้งหมด:</td>
-                    <td>
-                        <strong style="color: <?php echo ($total_hours > 36) ? 'red' : 'black'; ?>;">
-                            <?php echo htmlspecialchars($total_hours); ?>
-                        </strong>
-                    </td>
+                    <td><strong><?php echo htmlspecialchars($total_hours); ?></strong></td>
                 </tr>
             </tfoot>
         </table>
     </main>
 
     <script>
+        // Event Listener สำหรับ year
         document.getElementById('year').addEventListener('change', function () {
             const selectedYear = this.value;
             const url = new URL(window.location.href);
@@ -395,10 +414,11 @@ $current_year = date('Y');
             window.location.href = url.toString();
         });
 
-        document.getElementById('term').addEventListener('change', function () {
-            const selectedTerm = this.value;
+        // Event Listener สำหรับ terms
+        document.getElementById('terms').addEventListener('change', function () {
+            const selectedTerms = this.value;
             const url = new URL(window.location.href);
-            url.searchParams.set('term', selectedTerm);
+            url.searchParams.set('terms', selectedTerms);
             window.location.href = url.toString();
         });
     </script>
