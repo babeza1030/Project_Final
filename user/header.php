@@ -7,8 +7,9 @@
                     <option value="index.php">หน้าแรก</option>
                     <option value="user_profile.php">แก้ไขข้อมูล</option>
                     <option value="user_studentloan1.php">จิตอาสา</option>
-                    <option value="user_nonti.php">แจ้งเตือนสถานะ</option>
+                    <option value="user_reset_password.php?student_id=">เปลี่ยนรหัสผ่าน</option>
                     <option value="logout.php">ออกจากระบบ</option>
+                    
 
                 </select>
                 <script>

@@ -146,12 +146,12 @@ if (isset($_GET['student_id'])) {
                value="<?php echo htmlspecialchars($row['phone_number_home']); ?>" required>
     </div>
     <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
+        <label for="email" class="form-label">อีเมล</label>
         <input type="email" class="form-control" id="email" name="email"
                value="<?php echo htmlspecialchars($row['email']); ?>" required>
     </div>
     <div class="mb-3">
-        <label for="address" class="form-label">Address</label>
+        <label for="address" class="form-label">ที่อยู่</label>
         <input type="text" class="form-control" id="address" name="address"
                value="<?php echo htmlspecialchars($row['address']); ?>" required>
     </div>

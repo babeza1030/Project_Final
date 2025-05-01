@@ -183,7 +183,9 @@ $conn->close();
                     <i class="bi bi-pencil-square"></i> แก้ไขข้อมูล
                 </a>
             </div>
-        </div>
+                
+        </div>  
+        
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

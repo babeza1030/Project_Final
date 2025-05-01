@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $l_name = trim($_POST['l_name']);
     $phone_number = trim($_POST['phone_number']);
     $email = trim($_POST['email']);
+    // $student_code = trim($_POST['student_code']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
 
@@ -35,9 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
             // Insert data into the database
-            $sql = "INSERT INTO student (student_id, f_name, l_name, phone_number, email, password) VALUES (?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO student (student_id,  f_name, l_name, phone_number, email, password) VALUES ( ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssss", $student_id, $f_name, $l_name, $phone_number, $email, $hashed_password);
+            $stmt->bind_param("ssssss", $student_id,  $f_name, $l_name, $phone_number, $email, $hashed_password);
 
             if ($stmt->execute()) {
                 echo "<script>alert('ลงทะเบียนสำเร็จ'); window.location.href='user_login.php';</script>";
@@ -92,6 +93,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="input-box">
                     <input type="text" id="email" name="email" required placeholder="Email">
                 </div>
+
+                <!-- <div class="input-box">
+                    <input type="text" id="student_code" name="student_code" required placeholder="รหัสนักศึกษา">
+                </div> -->
 
                 <div class="input-box">
                     <input type="password" id="password" name="password" class="form-control" required placeholder="รหัสผ่าน">

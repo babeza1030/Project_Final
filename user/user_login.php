@@ -6,34 +6,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username']; // รับค่าชื่อผู้ใช้ หรือเลขบัตรประชาชน
     $password = $_POST['password']; // รับค่ารหัสผ่าน
 
-    // // ตรวจสอบในตาราง user (สำหรับเจ้าหน้าที่)
-    // $sql_user = "SELECT * FROM teacher WHERE officer_id  = '$username' AND password_hash = '$password'";
-    // $result_user = $conn->query($sql_user);
+    // ตรวจสอบในตาราง user (สำหรับเจ้าหน้าที่)
+    $sql_user = "SELECT * FROM teacher WHERE officer_id = ?";
+    $stmt_user = $conn->prepare($sql_user);
+    $stmt_user->bind_param("s", $username);
+    $stmt_user->execute();
+    $result_user = $stmt_user->get_result();
 
     // ตรวจสอบในตาราง collegian (สำหรับนักศึกษา)
-    $sql_collegian = "SELECT * FROM student WHERE student_id = '$username'";
-    $result_collegian = $conn->query($sql_collegian);
+    $sql_collegian = "SELECT * FROM student WHERE student_id = ?";
+    $stmt_collegian = $conn->prepare($sql_collegian);
+    $stmt_collegian->bind_param("s", $username);
+    $stmt_collegian->execute();
+    $result_collegian = $stmt_collegian->get_result();
 
-    if ($result_user->num_rows > 0) {
+    if ($result_user && $result_user->num_rows > 0) {
         // ถ้าเป็นเจ้าหน้าที่ (user)
         $user = $result_user->fetch_assoc();
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['role'] = "user";
-        $_SESSION['user_id'] = $user['user_id'];
-        header("Location: index.php");
-        exit();
-    } elseif ($result_collegian->num_rows > 0) {
+        if (password_verify($password, $user['password'])) {
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['role'] = "user";
+            $_SESSION['user_id'] = $user['user_id'];
+            header("Location: index.php");
+            exit();
+        } else {
+            echo "Invalid ID or password.";
+        }
+    } elseif ($result_collegian && $result_collegian->num_rows > 0) {
         // ถ้าเป็นนักศึกษา (collegian)
         $collegian = $result_collegian->fetch_assoc();
-        $_SESSION['username'] = $collegian['student_id']; 
-        $_SESSION['role'] = "collegian";
-        $_SESSION['user_id'] = $collegian['student_id'];
-        header("Location: index.php");
-        exit();
+        if (password_verify($password, $collegian['password'])) {
+            $_SESSION['username'] = $collegian['student_id'];
+            $_SESSION['role'] = "collegian";
+            $_SESSION['user_id'] = $collegian['student_id'];
+            header("Location: index.php");
+            exit();
+        } else {
+            echo "Invalid ID or password.";
+        }
     } else {
         echo "Invalid ID or password.";
     }
 
+    $stmt_user->close();
+    $stmt_collegian->close();
     $conn->close();
 }
 ?>

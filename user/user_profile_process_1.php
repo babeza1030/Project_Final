@@ -150,42 +150,42 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPL
         <h2 class="mb-4">แก้ไขข้อมูล</h2>
         <form action="user_profile_process_save1.php" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
             <div class="mb-3">
-                <label for="student_id" class="form-label">Student ID</label>
+                <label for="student_id" class="form-label">เลขบัตรประจำตัวประชาชน</label>
                 <input type="text" class="form-control" id="student_id" name="student_id"
                     value="<?php echo htmlspecialchars($row['student_id']); ?>" readonly>
             </div>
             <div class="mb-3">
-                <label for="student_code" class="form-label">Student Code</label>
+                <label for="student_code" class="form-label">รหัสนักศึกษา</label>
                 <input type="text" class="form-control" id="student_code" name="student_code"
                     value="<?php echo htmlspecialchars($row['student_code']); ?>" required>
             </div>
             <div class="mb-3">
-                <label for="f_name" class="form-label">First Name</label>
+                <label for="f_name" class="form-label">ชื่อจริง</label>
                 <input type="text" class="form-control" id="f_name" name="f_name"
                     value="<?php echo htmlspecialchars($row['f_name']); ?>" required>
             </div>
             <div class="mb-3">
-                <label for="l_name" class="form-label">Last Name</label>
+                <label for="l_name" class="form-label">นามสกุล</label>
                 <input type="text" class="form-control" id="l_name" name="l_name"
                     value="<?php echo htmlspecialchars($row['l_name']); ?>" required>
             </div>
             <div class="mb-3">
-                <label for="address" class="form-label">Address</label>
+                <label for="address" class="form-label">ที่อยู่</label>
                 <input type="text" class="form-control" id="address" name="address"
                     value="<?php echo htmlspecialchars($row['address']); ?>" required>
             </div>
             <div class="mb-3">
-                <label for="phone_number" class="form-label">Phone Number</label>
+                <label for="phone_number" class="form-label">เบอร์โทรศัพท์</label>
                 <input type="text" class="form-control" id="phone_number" name="phone_number"
                     value="<?php echo htmlspecialchars($row['phone_number']); ?>" required>
             </div>
             <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label">อีเมล</label>
                 <input type="email" class="form-control" id="email" name="email"
                     value="<?php echo htmlspecialchars($row['email']); ?>" required>
             </div>
             <div class="mb-3">
-                <label for="profile_image" class="form-label">Profile Image</label>
+                <label for="profile_image" class="form-label">รูปนักศึกษา</label>
                 <?php if (!empty($row['profile_image'])): ?>
                     <div>
                         <img src="<?php echo htmlspecialchars($row['profile_image']); ?>" alt="Profile Image" style="width: 100px; height: auto;">
