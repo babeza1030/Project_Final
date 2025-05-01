@@ -7,6 +7,25 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
+function getFacultyName($facultyId) {
+    $faculties = [
+        1 => "คณะวิศวกรรมศาสตร์",
+        2 => "คณะบริหารธุรกิจ",
+        3 => "คณะบัญชี"
+    ];
+    return $faculties[$facultyId] ?? "ไม่ทราบคณะ";
+}
+
+function getDepartmentName($departmentId) {
+    $departments = [
+        1 => "วิศวกรรมคอมพิวเตอร์",
+        2 => "วิศวกรรมเครื่องกล",
+        3 => "การจัดการธุรกิจ",
+        4 => "การบัญชี"
+    ];
+    return $departments[$departmentId] ?? "ไม่ทราบสาขา";
+}
+
 $student_id = $_SESSION['username']; // Assuming username is actually student_id
 $sql = "SELECT 
             student.*, 
@@ -16,12 +35,14 @@ $sql = "SELECT
             mother.mother_id, mother.mother_address, mother.mother_occupation, mother.mother_income, 
             father.father_phone_number, mother.mother_phone_number, 
             endorsee.full_name AS endorsee_name, endorsee.address AS endorsee_address, endorsee.phone_number AS endorsee_phone_number, 
-            department.department_name
+            department.department_name,
+            faculty.faculty_name
         FROM student 
         LEFT JOIN father ON student.father_id = father.father_id 
         LEFT JOIN mother ON student.mother_id = mother.mother_id 
         LEFT JOIN endorsee ON student.endorser_id = endorsee.endorser_id
         LEFT JOIN department ON student.department_id = department.department_id
+        LEFT JOIN faculty ON department.faculty_id = faculty.faculty_id
         WHERE student.student_id = ?";
 $stmt = $conn->prepare($sql);
 
@@ -112,7 +133,8 @@ $conn->close();
                 <div class="info-row"><strong>ชื่อผู้รับรอง</strong> <span><?php echo htmlspecialchars($student["endorsee_name"]); ?></span></div>
                 <div class="info-row"><strong>ที่อยู่ผู้รับรอง</strong> <span><?php echo htmlspecialchars($student["endorsee_address"]); ?></span></div>
                 <div class="info-row"><strong>เบอร์โทรศัพท์ผู้รับรอง</strong> <span><?php echo htmlspecialchars($student["endorsee_phone_number"]); ?></span></div>
-                <div class="info-row"><strong>คณะสาขา</strong> <span><?php echo htmlspecialchars($student["department_name"]); ?></span></div>
+                <div class="info-row"><strong>คณะ</strong> <span><?php echo htmlspecialchars(getFacultyName($student["s_faculty"])); ?></span></div>
+                <div class="info-row"><strong>สาขา</strong> <span><?php echo htmlspecialchars(getDepartmentName($student["s_department"])); ?></span></div>
                 <div class="info-row"><strong>สถานภาพครอบครัว</strong> <span><?php echo htmlspecialchars($student["family_status"]); ?></span></div>
                 <!-- <div class="info-row"><strong>รหัสผ่าน</strong> <span><?php echo htmlspecialchars($student["password"]); ?></span></div> -->
                 
@@ -168,5 +190,4 @@ $conn->close();
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-
 </html>

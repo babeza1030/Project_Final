@@ -25,6 +25,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mother_phone_number = htmlspecialchars($_POST['mother_phone_number']);
     $family_status = htmlspecialchars($_POST['family_status']);
 
+    // ตรวจสอบว่าค่า father_id และ mother_id มีอยู่ในตาราง father และ mother
+    $check_father = $conn->prepare("SELECT COUNT(*) FROM father WHERE father_id = ?");
+    $check_father->bind_param("s", $father_id);
+    $check_father->execute();
+    $check_father->bind_result($father_exists);
+    $check_father->fetch();
+    $check_father->close();
+
+    $check_mother = $conn->prepare("SELECT COUNT(*) FROM mother WHERE mother_id = ?");
+    $check_mother->bind_param("s", $mother_id);
+    $check_mother->execute();
+    $check_mother->bind_result($mother_exists);
+    $check_mother->fetch();
+    $check_mother->close();
+
+    if ($father_exists == 0 || $mother_exists == 0) {
+        echo "Error: Father or Mother ID does not exist in the database.";
+        exit();
+    }
+
     // Update the father table
     $sql_father = "UPDATE father SET 
                     father_name = ?, 

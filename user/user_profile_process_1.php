@@ -129,7 +129,7 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPL
         }
     </style>
 
-    <script>
+    <!-- <script>
         function validateForm() {
             var password = document.getElementById("password").value;
             var confirmPassword = document.getElementById("confirm_password").value;
@@ -139,7 +139,7 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPL
             }
             return true;
         }
-    </script>
+    </script> -->
 </head>
 
 <body>
@@ -191,37 +191,9 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPL
                         <img src="<?php echo htmlspecialchars($row['profile_image']); ?>" alt="Profile Image" style="width: 100px; height: auto;">
                     </div>
                     <p>มีรูปภาพโปรไฟล์แล้ว</p>
-                <?php else: ?>
-                    <form action="user_profile_process_save1.php" method="POST" enctype="multipart/form-data">
-                        <input type="file" class="form-control" id="profile_image" name="profile_image">
-                    </form>
                 <?php endif; ?>
+                <input type="file" class="form-control" id="profile_image" name="profile_image">
             </div>
-            <!-- <div class="mb-3">
-                <label for="spouse_id" class="form-label">Spouse ID</label>
-                <input type="text" class="form-control" id="spouse_id" name="spouse_id"
-                    value="<?php echo htmlspecialchars($row['spouse_id']); ?>" required>
-            </div> -->
-            <!-- <div class="mb-3">
-                <label for="father_id" class="form-label">Father ID</label>
-                <input type="text" class="form-control" id="father_id" name="father_id"
-                    value="<?php echo htmlspecialchars($row['father_id']); ?>" required>
-            </div> -->
-            <!-- <div class="mb-3">
-                <label for="mother_id" class="form-label">Mother ID</label>
-                <input type="text" class="form-control" id="mother_id" name="mother_id"
-                    value="<?php echo htmlspecialchars($row['mother_id']); ?>" required>
-            </div> -->
-            <!-- <div class="mb-3">
-                <label for="guardian_id" class="form-label">Guardian ID</label>
-                <input type="text" class="form-control" id="guardian_id" name="guardian_id"
-                    value="<?php echo htmlspecialchars($row['guardian_id']); ?>" required>
-            </div> -->
-            <!-- <div class="mb-3">
-                <label for="endorser_id" class="form-label">Endorser ID</label>
-                <input type="text" class="form-control" id="endorser_id" name="endorser_id"
-                    value="<?php echo htmlspecialchars($row['endorser_id']); ?>" required>
-            </div> -->
             <div class="mb-3">
                 <label for="s_faculty" class="form-label">คณะ</label>
                 <select class="form-control" id="s_faculty" name="s_faculty" required>
@@ -242,18 +214,13 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPL
                 </select>
             </div>
             <!-- <div class="mb-3">
-                <label for="family_status_id" class="form-label">Family Status ID</label>
-                <input type="text" class="form-control" id="family_status_id" name="family_status_id"
-                    value="<?php echo htmlspecialchars($row['family_status_id']); ?>" required>
-            </div> -->
-            <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
             <div class="mb-3">
                 <label for="confirm_password" class="form-label">Confirm Password</label>
                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-            </div>
+            </div> -->
             <button type="submit" class="btn btn-primary">บันทึกการเปลี่ยนแปลง</button>
             <a href="user_profile.php" class="btn btn-secondary mt-2">ยกเลิก</a>
         </form>
