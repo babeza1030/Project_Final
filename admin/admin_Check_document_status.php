@@ -552,7 +552,7 @@ if ($term_result->num_rows > 0) {
         <p><strong>คำอธิบาย:</strong> <span id="modal-details"></span></p>
         <p><strong>วันที่สร้าง:</strong> <span id="modal-created-at"></span></p>
         <p><strong>รูปภาพ:</strong></p>
-        <img id="modal-image" src="" alt="Activity Image" style="display: none;">
+        <img id="modal-image" src="" alt="ชื่อกิจกรรม" style="display: none;">
 
         <!-- ปุ่มเพิ่มคะแนน -->
         <div class="mt-3">
@@ -563,21 +563,48 @@ if ($term_result->num_rows > 0) {
     </div>
 </div>
 
+<!-- Modal สำหรับกรอกคะแนน -->
+<div id="scoreModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000;">
+    <div class="modal-content" style="background: #fff; margin: 10% auto; padding: 20px; width: 40%; border-radius: 8px; position: relative;">
+        <h3>เพิ่มคะแนน</h3>
+        <p><strong>ชื่อกิจกรรม:</strong> <span id="score-activity-name"></span></p>
+        <p><strong>ชั่วโมงสูงสุด:</strong> <span id="score-max-hours"></span></p>
+        <form id="scoreForm" method="GET" action="give_score.php">
+            <input type="hidden" name="username" id="score-username">
+            <label for="score-input">กรุณากรอกคะแนน:</label>
+            <input type="number" id="score-input" name="h_hours" class="form-control" min="0" max="" required>
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">ยืนยัน</button>
+                <button type="button" class="btn btn-secondary" onclick="closeScoreModal()">ยกเลิก</button>
+            </div>
+        </form>
+    </div>
+</div>
+
     <script>
-        function checkDocument(username) {
-            if (confirm("คุณต้องการตรวจเอกสารนี้หรือไม่?")) {
+        function checkDocument(username, activityName) {
+            if (confirm(`คุณต้องการตรวจเอกสารของกิจกรรม "${activityName}" หรือไม่?`)) {
                 window.location.href = `check_document.php?username=${encodeURIComponent(username)}`;
             }
         }
 
         function giveScoreInModal() {
             const username = document.getElementById('modal-username').innerText;
-            const h_hours = prompt("กรุณากรอกคะแนน (0-100):");
-            if (h_hours !== null && !isNaN(h_hours) && h_hours >= 0 && h_hours <= 100) {
-                window.location.href = `give_score.php?username=${encodeURIComponent(username)}&h_hours=${h_hours}`;
-            } else {
-                alert("กรุณากรอกคะแนนที่ถูกต้อง!");
-            }
+            const activityName = document.getElementById('modal-activity').innerText;
+            const maxHours = parseInt(document.getElementById('modal-max-hours').innerText);
+
+            // ตั้งค่าข้อมูลใน Modal
+            document.getElementById('score-username').value = username;
+            document.getElementById('score-activity-name').innerText = activityName;
+            document.getElementById('score-max-hours').innerText = maxHours;
+            document.getElementById('score-input').max = maxHours;
+
+            // แสดง Modal
+            document.getElementById('scoreModal').style.display = 'block';
+        }
+
+        function closeScoreModal() {
+            document.getElementById('scoreModal').style.display = 'none';
         }
 
         // ใน modal
@@ -585,7 +612,7 @@ if ($term_result->num_rows > 0) {
             document.getElementById('modal-username').innerText = row.username;
             document.getElementById('modal-fullname').innerText = row.f_name + " " + row.l_name;
             document.getElementById('modal-activity').innerText = row.activity_name;
-            document.getElementById('modal-max-hours').innerText = row.max_hours;
+            document.getElementById('modal-max-hours').innerText = row.max_hours; // กำหนดค่าชั่วโมงสูงสุด
             document.getElementById('modal-hours').innerText = row.hours_completed;
             document.getElementById('modal-location').innerText = row.location;
             document.getElementById('modal-details').innerText = row.details;
@@ -594,6 +621,7 @@ if ($term_result->num_rows > 0) {
             // แสดงรูปภาพ
             if (row.image_path) {
                 document.getElementById('modal-image').src = row.image_path;
+                document.getElementById('modal-image').alt = row.activity_name; // ใช้ชื่อกิจกรรมใน alt
                 document.getElementById('modal-image').style.display = 'block';
             } else {
                 document.getElementById('modal-image').style.display = 'none';
