@@ -6,6 +6,30 @@ if (!isset($_SESSION['username'])) {
     header("Location: admin_login.php");
     exit();
 }
+
+// ดึงข้อมูลจากตาราง activities และ new_user_activities
+$query = "
+    SELECT a.name AS activity_name, COUNT(nua.activity_id) AS participants
+    FROM activities a
+    LEFT JOIN new_user_activities nua ON a.id = nua.activity_id
+    GROUP BY a.name
+    ORDER BY participants DESC
+";
+$result = $conn->query($query);
+
+$activities = [];
+$mostPopularActivity = null;
+$maxParticipants = 0;
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $activities[] = $row;
+        if ($row['participants'] > $maxParticipants) {
+            $maxParticipants = $row['participants'];
+            $mostPopularActivity = $row['activity_name'];
+        }
+    }
+}
 ?>
 
 
@@ -208,24 +232,21 @@ if (!isset($_SESSION['username'])) {
                         <th>จำนวนผู้เข้าร่วม</th>
                     </tr>
                 </thead>
-                <tbody id="volunteerTableBody">
-                    <tr>
-                        <td>กิจกรรม A</td>
-                        <td>50</td>
-                    </tr>
-                    <tr>
-                        <td>กิจกรรม B</td>
-                        <td>30</td>
-                    </tr>
-                    <tr>
-                        <td>กิจกรรม C</td>
-                        <td>70</td>
-                    </tr>
+                <tbody>
+                    <?php foreach ($activities as $activity): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($activity['activity_name']); ?></td>
+                            <td><?php echo htmlspecialchars($activity['participants']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
             <!-- สรุปกิจกรรมที่มีผู้เข้าร่วมมากที่สุด -->
             <div id="mostPopularActivity" class="mt-3">
-                <h4>กิจกรรมที่มีผู้เข้าร่วมมากที่สุด: </h4>
+                <h4>กิจกรรมที่มีผู้เข้าร่วมมากที่สุด: 
+                    <?php echo htmlspecialchars($mostPopularActivity); ?> 
+                    (<?php echo $maxParticipants; ?> คน)
+                </h4>
             </div>
         </div>
 
@@ -237,26 +258,14 @@ if (!isset($_SESSION['username'])) {
     </div>
 
     <script>
-        // คำนวณกิจกรรมที่มีผู้เข้าร่วมมากที่สุด
-        const volunteerData = [
-            { name: 'กิจกรรม A', participants: 50 },
-            { name: 'กิจกรรม B', participants: 30 },
-            { name: 'กิจกรรม C', participants: 70 }
-        ];
-
-        const mostPopular = volunteerData.reduce((max, activity) => activity.participants > max.participants ? activity : max, volunteerData[0]);
-
-        // แสดงผลกิจกรรมที่มีผู้เข้าร่วมมากที่สุด
-        document.getElementById('mostPopularActivity').innerHTML = `
-            <h4>กิจกรรมที่มีผู้เข้าร่วมมากที่สุด: ${mostPopular.name} (${mostPopular.participants} คน)</h4>
-        `;
-
         // กราฟสรุปจิตอาสา
+        const volunteerData = <?php echo json_encode($activities); ?>;
+
         const volunteerCtx = document.getElementById('volunteerChart').getContext('2d');
         const volunteerChart = new Chart(volunteerCtx, {
             type: 'bar',
             data: {
-                labels: volunteerData.map(activity => activity.name),
+                labels: volunteerData.map(activity => activity.activity_name),
                 datasets: [{
                     label: 'จำนวนผู้เข้าร่วม',
                     data: volunteerData.map(activity => activity.participants),
