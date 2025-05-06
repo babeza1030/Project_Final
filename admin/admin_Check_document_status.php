@@ -138,12 +138,81 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
     <link rel="stylesheet" href="../static/css/style.css">
     <link rel="stylesheet" href="../static/css/bootstrap.css">
     <style>
-        body {
+        /* body {
             font-family: 'Arial', sans-serif;
             background-color: #f8f9fa;
             color: #343a40;
             margin: 0;
             padding: 0;
+        } */
+
+        /* ตั้งค่า Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: #ffffff;
+            color: #333;
+            padding-top: 20px;
+            border-right: 2px solid #ddd;
+        }
+
+        .sidebar img {
+            display: block;
+            width: 80%;
+            margin: 0 auto 10px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar ul li a {
+            color: #333;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .sidebar ul li a i {
+            margin-right: 10px;
+            font-size: 18px;
+            color: #F17629;
+        }
+
+        .sidebar ul li a:hover {
+            background: #f5f5f5;
+            padding-left: 10px;
+            border-radius: 5px;
+        }
+
+        .box_head {
+            background: #F17629;
+            color: white;
+            padding: 15px;
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+        
+        .container {
+            margin-left: 270px; /* เว้นที่สำหรับ Sidebar */
+            max-width: 1200px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         h2 {
@@ -156,15 +225,6 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
         p {
             font-size: 1rem;
             color: #6c757d;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .filters {
@@ -401,7 +461,32 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
     </style>
 </head>
 
+<header class="box_head">
+            <?php if (isset($_SESSION['username'])): ?>
+                <span>ยินดีต้อนรับ , <?php echo $_SESSION['username']; ?></span>
+            <?php endif; ?>
+            
+            <p class="text-right">  วันที่: <?php echo date("d/m/Y"); ?></p>
+            <br>
+
+        </header>
 <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <img src="../static/img/logo.png" alt="Kasem Bundit University">
+        <ul>
+            <li><a href="admin_dashboard.php"><i class="bi bi-house"></i> หน้าหลัก (Dashboard)</a></li>
+            <li><a href="admin_edit_student.php"><i class="bi bi-person"></i> แก้ไขข้อมูลนักศึกษา</a></li>
+            <li><a href="adminadd_user.php"><i class="bi bi-person-plus"></i> เพิ่มนักศึกษา</a></li>
+            <li><a href="admin_edit_teacher.php"><i class="bi bi-briefcase"></i> แก้ไขข้อมูลอาจารย์</a></li>
+            <li><a href="adminadd_teacher.php"><i class="bi bi-person-plus"></i> เพิ่มอาจารย์</a></li>
+            <li><a href="admin_Check_document_status.php"><i class="bi bi-file-text"></i> ตรวจสอบเอกสารจิตอาสา</a></li>
+            <li><a href="admin_report.php"><i class="bi bi-file-text"></i> รายงานสรุป</a></li>
+            <li><a href="adminlogout.php" class="logout-btn"><i class="bi bi-box-arrow-right"></i> ออกจากระบบ</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
     <div class="container mt-4">
         <h2 class="text-center">ตรวจสอบเอกสารจิตอาสา</h2>
         <p class="text-center">ข้อมูลเอกสารที่ส่งเข้ามาในระบบ</p>

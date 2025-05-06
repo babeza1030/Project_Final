@@ -23,6 +23,7 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>แก้ไขข้อมูลนักเรียน</title>
+    <link rel="stylesheet" href="../static/css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* ตั้งค่า Sidebar */
@@ -77,9 +78,9 @@ $result = $conn->query($sql);
 
         /* ตั้งค่าเนื้อหาหลัก */
         .main-content {
-            margin-left: 250px;
+            margin-left: 270px; /* เว้นที่สำหรับ Sidebar */
             padding: 20px;
-            width: calc(100% - 250px);
+            width: calc(100% - 270px);
         }
 
         .box_head {
@@ -90,35 +91,6 @@ $result = $conn->query($sql);
             font-size: 18px;
             font-weight: bold;
             border-radius: 5px;
-        }
-
-        .status-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .status-card {
-            width: 300px;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .pending { background-color: #f8c471; }
-        .in-review { background-color: #5d6d7e; }
-        .approved { background-color: #7dcea0; }
-
-        /* ตาราง */
-        .search-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 10px;
         }
 
         .table {
@@ -138,7 +110,6 @@ $result = $conn->query($sql);
             color: white;
         }
 
-        /* ปุ่มแก้ไข */
         .btn-edit {
             background-color: #f17629;
             color: white;
@@ -150,44 +121,71 @@ $result = $conn->query($sql);
         }
     </style>
 </head>
+
+<header class="box_head">
+            <?php if (isset($_SESSION['username'])): ?>
+                <span>ยินดีต้อนรับ , <?php echo $_SESSION['username']; ?></span>
+            <?php endif; ?>
+            
+            <p class="text-right">  วันที่: <?php echo date("d/m/Y"); ?></p>
+            <br>
+
+        </header>
+        
 <body>
-<div class="container mt-5">
-    <h2 class="text-center rounded-pill mb-4 col px-md-5 btn-edit ">แก้ไขข้อมูลนักเรียน</h2>
-    <table class="table table-bordered table-striped">
-        <thead class="thead-dark">
-            <tr>
-                <th>Student ID</th>
-                <th>Student Code</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Address</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                    echo "<tr>
-                            <td>" . htmlspecialchars($row["student_id"]) . "</td>
-                            <td>" . htmlspecialchars($row["student_code"]) . "</td>
-                            <td>" . htmlspecialchars($row["f_name"]) . "</td>
-                            <td>" . htmlspecialchars($row["l_name"]) . "</td>
-                            <td>" . htmlspecialchars($row["address"]) . "</td>
-                            <td><a href='admin_edit_student_process.php?student_id=" . htmlspecialchars($row["student_id"]) . "' class='btn  btn-edit'>แก้ไข</a></td>
-                          </tr>";
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <img src="../static/img/logo.png" alt="Kasem Bundit University">
+        <ul>
+            <li><a href="admin_dashboard.php"><i class="bi bi-house"></i> หน้าหลัก (Dashboard)</a></li>
+            <li><a href="admin_edit_student.php"><i class="bi bi-person"></i> แก้ไขข้อมูลนักศึกษา</a></li>
+            <li><a href="adminadd_user.php"><i class="bi bi-person-plus"></i> เพิ่มนักศึกษา</a></li>
+            <li><a href="admin_edit_teacher.php"><i class="bi bi-briefcase"></i> แก้ไขข้อมูลอาจารย์</a></li>
+            <li><a href="adminadd_teacher.php"><i class="bi bi-person-plus"></i> เพิ่มอาจารย์</a></li>
+            <li><a href="admin_Check_document_status.php"><i class="bi bi-file-text"></i> ตรวจสอบเอกสารจิตอาสา</a></li>
+            <li><a href="admin_report.php"><i class="bi bi-file-text"></i> รายงานสรุป</a></li>
+            <li><a href="adminlogout.php" class="logout-btn"><i class="bi bi-box-arrow-right"></i> ออกจากระบบ</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h2 class="text-center rounded-pill mb-4 col px-md-5 btn-edit">แก้ไขข้อมูลนักเรียน</h2>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Student ID</th>
+                    <th>Student Code</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Address</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if ($result->num_rows > 0) {
+                    while($row = $result->fetch_assoc()) {
+                        echo "<tr>
+                                <td>" . htmlspecialchars($row["student_id"]) . "</td>
+                                <td>" . htmlspecialchars($row["student_code"]) . "</td>
+                                <td>" . htmlspecialchars($row["f_name"]) . "</td>
+                                <td>" . htmlspecialchars($row["l_name"]) . "</td>
+                                <td>" . htmlspecialchars($row["address"]) . "</td>
+                                <td><a href='admin_edit_student_process.php?student_id=" . htmlspecialchars($row["student_id"]) . "' class='btn btn-edit'>แก้ไข</a></td>
+                              </tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='6' class='text-center'>ไม่พบข้อมูล</td></tr>";
                 }
-            } else {
-                echo "<tr><td colspan='6' class='text-center'>ไม่พบข้อมูล</td></tr>";
-            }
-            $conn->close();
-            ?>
-        </tbody>
-    </table>
-    <a href="admin_dashboard.php" class="btn btn-secondary">กลับไปที่แดชบอร์ด</a>
-</div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                $conn->close();
+                ?>
+            </tbody>
+        </table>
+        <a href="admin_dashboard.php" class="btn btn-secondary">กลับไปที่แดชบอร์ด</a>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

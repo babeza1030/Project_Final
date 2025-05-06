@@ -6,22 +6,8 @@ if (!isset($_SESSION['username'])) {
     header("Location: admin_login.php");
     exit();
 }
-
-// ดึงข้อมูลสำหรับตารางและกราฟ
-$volunteer_sql = "SELECT activity_name, COUNT(*) AS total_participants, SUM(hours_completed) AS total_hours FROM new_user_activities GROUP BY activity_name";
-$volunteer_result = $conn->query($volunteer_sql);
-
-if (!$volunteer_result) {
-    die("Error in volunteer SQL: " . $conn->error);
-}
-
-$loan_sql = "SELECT loan_status, COUNT(*) AS total_students FROM student_loans GROUP BY loan_status";
-$loan_result = $conn->query($loan_sql);
-
-if (!$loan_result) {
-    die("Error in loan SQL: " . $conn->error);
-}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="th">
@@ -31,18 +17,106 @@ if (!$loan_result) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>รายงานสรุป</title>
     <link rel="stylesheet" href="../static/css/style.css">
-    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-            width: calc(100% - 250px);
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
         }
 
-        .table-container {
-            margin-top: 20px;
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: #ffffff;
+            color: #333;
+            padding-top: 20px;
+            border-right: 2px solid #ddd;
+        }
+
+        .sidebar img {
+            display: block;
+            width: 80%;
+            margin: 0 auto 10px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar ul li a {
+            color: #333;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .sidebar ul li a:hover {
+            background: #f5f5f5;
+            padding-left: 10px;
+            border-radius: 5px;
+        }
+
+        .box_head {
+            background: #F17629;
+            color: white;
+            padding: 15px;
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+        }
+
+        .box {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .box h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .table th {
+            background-color: #f17629;
+            color: white;
+        }
+
+        .branch-row {
+            display: none;
+            background-color: #f9f9f9;
+        }
+
+        .branch-row td {
+            padding-left: 30px;
+        }
+
+        .toggle-btn {
+            cursor: pointer;
+            color: #007bff;
+            text-decoration: underline;
         }
 
         .chart-container {
@@ -52,6 +126,16 @@ if (!$loan_result) {
         }
     </style>
 </head>
+
+<header class="box_head">
+            <?php if (isset($_SESSION['username'])): ?>
+                <span>ยินดีต้อนรับ , <?php echo $_SESSION['username']; ?></span>
+            <?php endif; ?>
+            
+            <p class="text-right">  วันที่: <?php echo date("d/m/Y"); ?></p>
+            <br>
+
+        </header>
 
 <body>
 
@@ -72,88 +156,110 @@ if (!$loan_result) {
 
     <!-- Main Content -->
     <div class="main-content">
-        <h1>รายงานสรุป</h1>
+        <!-- Box: ตารางสรุปผู้กู้ กยศ. -->
+        <div class="box">
+            <h2>ตารางสรุปผู้กู้ กยศ.</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>คณะ</th>
+                        <th>สาขา</th>
+                        <th>ปี 1</th>
+                        <th>ปี 2</th>
+                        <th>ปี 3</th>
+                        <th>ปี 4</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="2">คณะวิทยาศาสตร์</td>
+                        <td>คณิตศาสตร์</td>
+                        <td>20</td>
+                        <td>15</td>
+                        <td>10</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>ฟิสิกส์</td>
+                        <td>15</td>
+                        <td>15</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="1">คณะวิศวกรรมศาสตร์</td>
+                        <td>วิศวกรรมคอมพิวเตอร์</td>
+                        <td>30</td>
+                        <td>30</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-        <!-- ตารางรายงานสรุปจิตอาสา -->
-        <div class="table-container">
+        <!-- Box: ตารางรายงานสรุปจิตอาสา -->
+        <div class="box">
             <h2>ตารางรายงานสรุปจิตอาสา</h2>
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>ชื่อกิจกรรม</th>
                         <th>จำนวนผู้เข้าร่วม</th>
-                        <th>จำนวนชั่วโมงรวม</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php while ($row = $volunteer_result->fetch_assoc()): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($row['activity_name']); ?></td>
-                            <td><?php echo htmlspecialchars($row['total_participants']); ?></td>
-                            <td><?php echo htmlspecialchars($row['total_hours']); ?></td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- ตารางสรุปผู้กู้ กยศ. -->
-        <div class="table-container">
-            <h2>ตารางสรุปผู้กู้ กยศ.</h2>
-            <table class="table table-bordered">
-                <thead>
+                <tbody id="volunteerTableBody">
                     <tr>
-                        <th>สถานะการกู้</th>
-                        <th>จำนวนผู้กู้</th>
+                        <td>กิจกรรม A</td>
+                        <td>50</td>
                     </tr>
-                </thead>
-                <tbody>
-                    <?php while ($row = $loan_result->fetch_assoc()): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($row['loan_status']); ?></td>
-                            <td><?php echo htmlspecialchars($row['total_students']); ?></td>
-                        </tr>
-                    <?php endwhile; ?>
+                    <tr>
+                        <td>กิจกรรม B</td>
+                        <td>30</td>
+                    </tr>
+                    <tr>
+                        <td>กิจกรรม C</td>
+                        <td>70</td>
+                    </tr>
                 </tbody>
             </table>
+            <!-- สรุปกิจกรรมที่มีผู้เข้าร่วมมากที่สุด -->
+            <div id="mostPopularActivity" class="mt-3">
+                <h4>กิจกรรมที่มีผู้เข้าร่วมมากที่สุด: </h4>
+            </div>
         </div>
 
-        <!-- กราฟ -->
+        <!-- กราฟสรุปจิตอาสา -->
         <div class="chart-container">
             <h2>กราฟสรุปจิตอาสา</h2>
             <canvas id="volunteerChart"></canvas>
         </div>
-
-        <div class="chart-container">
-            <h2>กราฟสรุปผู้กู้ กยศ.</h2>
-            <canvas id="loanChart"></canvas>
-        </div>
     </div>
 
     <script>
+        // คำนวณกิจกรรมที่มีผู้เข้าร่วมมากที่สุด
+        const volunteerData = [
+            { name: 'กิจกรรม A', participants: 50 },
+            { name: 'กิจกรรม B', participants: 30 },
+            { name: 'กิจกรรม C', participants: 70 }
+        ];
+
+        const mostPopular = volunteerData.reduce((max, activity) => activity.participants > max.participants ? activity : max, volunteerData[0]);
+
+        // แสดงผลกิจกรรมที่มีผู้เข้าร่วมมากที่สุด
+        document.getElementById('mostPopularActivity').innerHTML = `
+            <h4>กิจกรรมที่มีผู้เข้าร่วมมากที่สุด: ${mostPopular.name} (${mostPopular.participants} คน)</h4>
+        `;
+
         // กราฟสรุปจิตอาสา
         const volunteerCtx = document.getElementById('volunteerChart').getContext('2d');
         const volunteerChart = new Chart(volunteerCtx, {
             type: 'bar',
             data: {
-                labels: [
-                    <?php
-                    $volunteer_result->data_seek(0); // รีเซ็ต pointer
-                    while ($row = $volunteer_result->fetch_assoc()) {
-                        echo '"' . $row['activity_name'] . '",';
-                    }
-                    ?>
-                ],
+                labels: volunteerData.map(activity => activity.name),
                 datasets: [{
-                    label: 'จำนวนชั่วโมงรวม',
-                    data: [
-                        <?php
-                        $volunteer_result->data_seek(0);
-                        while ($row = $volunteer_result->fetch_assoc()) {
-                            echo $row['total_hours'] . ',';
-                        }
-                        ?>
-                    ],
+                    label: 'จำนวนผู้เข้าร่วม',
+                    data: volunteerData.map(activity => activity.participants),
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
@@ -168,50 +274,8 @@ if (!$loan_result) {
                 }
             }
         });
-
-        // กราฟสรุปผู้กู้ กยศ.
-        const loanCtx = document.getElementById('loanChart').getContext('2d');
-        const loanChart = new Chart(loanCtx, {
-            type: 'pie',
-            data: {
-                labels: [
-                    <?php
-                    $loan_result->data_seek(0);
-                    while ($row = $loan_result->fetch_assoc()) {
-                        echo '"' . $row['loan_status'] . '",';
-                    }
-                    ?>
-                ],
-                datasets: [{
-                    label: 'จำนวนผู้กู้',
-                    data: [
-                        <?php
-                        $loan_result->data_seek(0);
-                        while ($row = $loan_result->fetch_assoc()) {
-                            echo $row['total_students'] . ',';
-                        }
-                        ?>
-                    ],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true
-            }
-        });
     </script>
 
 </body>
+
 </html>
