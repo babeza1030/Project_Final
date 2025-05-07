@@ -7,14 +7,30 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// ดึงข้อมูลจากตาราง activities และ new_user_activities
+// ดึงข้อมูลจากตาราง activities และ new_user_activities พร้อมกรองปีและเทอม
+$yearFilter = isset($_GET['year']) ? intval($_GET['year']) : null;
+$termFilter = isset($_GET['term']) ? intval($_GET['term']) : null;
+
 $query = "
     SELECT a.name AS activity_name, COUNT(nua.activity_id) AS participants
     FROM activities a
     LEFT JOIN new_user_activities nua ON a.id = nua.activity_id
+    WHERE 1=1
+";
+
+if ($yearFilter) {
+    $query .= " AND YEAR(nua.start_date) = $yearFilter";
+}
+
+if ($termFilter) {
+    $query .= " AND nua.terms = $termFilter";
+}
+
+$query .= "
     GROUP BY a.name
     ORDER BY participants DESC
 ";
+
 $result = $conn->query($query);
 if (!$result) {
     die("Error in query: " . $conn->error);
@@ -222,6 +238,36 @@ if ($result->num_rows > 0) {
 
     <!-- Main Content -->
     <div class="main-content">
+        <!-- Form สำหรับเลือกปีและเทอม -->
+        <form method="GET" class="mb-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="year" class="form-label">เลือกปี</label>
+                    <select name="year" id="year" class="form-select">
+                        <option value="">-- ปีทั้งหมด --</option> <!-- เพิ่มตัวเลือกปีทั้งหมด -->
+                        <?php
+                        // สร้างตัวเลือกปีจาก start_date
+                        $yearsQuery = "SELECT DISTINCT YEAR(start_date) AS year FROM new_user_activities ORDER BY year DESC";
+                        $yearsResult = $conn->query($yearsQuery);
+                        while ($yearRow = $yearsResult->fetch_assoc()) {
+                            $selected = (isset($_GET['year']) && $_GET['year'] == $yearRow['year']) ? 'selected' : '';
+                            echo "<option value='{$yearRow['year']}' $selected>{$yearRow['year']}</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="term" class="form-label">เลือกเทอม</label>
+                    <select name="term" id="term" class="form-select">
+                        <option value="">-- เลือกเทอม --</option>
+                        <option value="1" <?php echo (isset($_GET['term']) && $_GET['term'] == '1') ? 'selected' : ''; ?>>1</option>
+                        <option value="2" <?php echo (isset($_GET['term']) && $_GET['term'] == '2') ? 'selected' : ''; ?>>2</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">กรองข้อมูล</button>
+        </form>
+
         <!-- Box: ตารางสรุปผู้กู้ กยศ. -->
         <div class="box">
             <h2>ตารางสรุปผู้กู้ กยศ.</h2>
