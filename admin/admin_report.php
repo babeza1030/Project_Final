@@ -18,7 +18,7 @@ $query = "
     WHERE 1=1
 ";
 
-if ($yearFilter) {
+if ($yearFilter) { // ตรวจสอบว่ามีการเลือกปีหรือไม่
     $query .= " AND YEAR(nua.start_date) = $yearFilter";
 }
 
