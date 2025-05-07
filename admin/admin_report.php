@@ -16,6 +16,9 @@ $query = "
     ORDER BY participants DESC
 ";
 $result = $conn->query($query);
+if (!$result) {
+    die("Error in query: " . $conn->error);
+}
 
 $activities = [];
 $mostPopularActivity = null;
@@ -31,22 +34,37 @@ if ($result->num_rows > 0) {
     }
 }
 
-// ดึงข้อมูลจากตาราง faculty, department และ loan_summary
+// ดึงข้อมูลจากตาราง faculty, department และ student
 $query = "
     SELECT 
         f.faculty_name,
         d.department_name,
-        SUM(CASE WHEN ls.year = 1 THEN ls.student_count ELSE 0 END) AS year_1,
-        SUM(CASE WHEN ls.year = 2 THEN ls.student_count ELSE 0 END) AS year_2,
-        SUM(CASE WHEN ls.year = 3 THEN ls.student_count ELSE 0 END) AS year_3,
-        SUM(CASE WHEN ls.year = 4 THEN ls.student_count ELSE 0 END) AS year_4
+        SUM(CASE 
+            WHEN LEFT(s.student_code, 2) = '64' THEN 1 
+            ELSE 0 
+        END) AS year_1,
+        SUM(CASE 
+            WHEN LEFT(s.student_code, 2) = '63' THEN 1 
+            ELSE 0 
+        END) AS year_2,
+        SUM(CASE 
+            WHEN LEFT(s.student_code, 2) = '62' THEN 1 
+            ELSE 0 
+        END) AS year_3,
+        SUM(CASE 
+            WHEN LEFT(s.student_code, 2) = '61' THEN 1 
+            ELSE 0 
+        END) AS year_4
     FROM faculty f
     INNER JOIN department d ON f.faculty_id = d.faculty_id
-    LEFT JOIN loan_summary ls ON d.department_id = ls.department_id
+    LEFT JOIN student s ON d.department_id = s.department_id
     GROUP BY f.faculty_name, d.department_name
     ORDER BY f.faculty_name, d.department_name
 ";
 $result = $conn->query($query);
+if (!$result) {
+    die("Error in query: " . $conn->error);
+}
 
 $loanSummary = [];
 if ($result->num_rows > 0) {

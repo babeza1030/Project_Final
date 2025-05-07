@@ -163,6 +163,11 @@ if (!isset($_SESSION['username'])) {
             } else if (guardian === 'mother-only') {
                 e.preventDefault(); // ป้องกันการส่งฟอร์มปกติ
                 window.location.href = 'user_page2_form3_3.php'; // เปลี่ยนเส้นทางไปยังหน้า user_page2_form3_3.php
+        
+            }
+            else if (guardian === 'guardian') {
+                e.preventDefault(); // ป้องกันการส่งฟอร์มปกติ
+                window.location.href = 'user_page2_form3_4.php'; // เปลี่ยนเส้นทางไปยังหน้า user_page2_form3_4.php
             }
         });
     </script>

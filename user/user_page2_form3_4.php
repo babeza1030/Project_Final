@@ -106,7 +106,7 @@ if (!isset($_SESSION['username'])) {
         <h2>ดาวน์โหลดแบบฟอร์มขอกู้ยืมปี 2568</h2>
         <p>* ระบุว่าเป็นคำถามที่จำเป็น</p>
 
-        <form action="index.php" method="post">
+        <form action="user_page2_form3_4.php" method="post">
 
             <div class="question-text">
                 <h3>หนังสือให้ความยินยอม</h3>
