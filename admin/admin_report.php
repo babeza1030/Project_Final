@@ -30,6 +30,30 @@ if ($result->num_rows > 0) {
         }
     }
 }
+
+// ดึงข้อมูลจากตาราง faculty, department และ loan_summary
+$query = "
+    SELECT 
+        f.faculty_name,
+        d.department_name,
+        SUM(CASE WHEN ls.year = 1 THEN ls.student_count ELSE 0 END) AS year_1,
+        SUM(CASE WHEN ls.year = 2 THEN ls.student_count ELSE 0 END) AS year_2,
+        SUM(CASE WHEN ls.year = 3 THEN ls.student_count ELSE 0 END) AS year_3,
+        SUM(CASE WHEN ls.year = 4 THEN ls.student_count ELSE 0 END) AS year_4
+    FROM faculty f
+    INNER JOIN department d ON f.faculty_id = d.faculty_id
+    LEFT JOIN loan_summary ls ON d.department_id = ls.department_id
+    GROUP BY f.faculty_name, d.department_name
+    ORDER BY f.faculty_name, d.department_name
+";
+$result = $conn->query($query);
+
+$loanSummary = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $loanSummary[] = $row;
+    }
+}
 ?>
 
 
@@ -195,29 +219,16 @@ if ($result->num_rows > 0) {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td rowspan="2">คณะวิทยาศาสตร์</td>
-                        <td>คณิตศาสตร์</td>
-                        <td>20</td>
-                        <td>15</td>
-                        <td>10</td>
-                        <td>5</td>
-                    </tr>
-                    <tr>
-                        <td>ฟิสิกส์</td>
-                        <td>15</td>
-                        <td>15</td>
-                        <td>-</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td rowspan="1">คณะวิศวกรรมศาสตร์</td>
-                        <td>วิศวกรรมคอมพิวเตอร์</td>
-                        <td>30</td>
-                        <td>30</td>
-                        <td>-</td>
-                        <td>-</td>
-                    </tr>
+                    <?php foreach ($loanSummary as $row): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($row['faculty_name']); ?></td>
+                            <td><?php echo htmlspecialchars($row['department_name']); ?></td>
+                            <td><?php echo htmlspecialchars($row['year_1']); ?></td>
+                            <td><?php echo htmlspecialchars($row['year_2']); ?></td>
+                            <td><?php echo htmlspecialchars($row['year_3']); ?></td>
+                            <td><?php echo htmlspecialchars($row['year_4']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
