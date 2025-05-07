@@ -176,12 +176,20 @@ $result = $conn->query($sql);
         <img src="../static/img/logo.png" alt="Kasem Bundit University">
         <ul>
             <li><a href="admin_dashboard.php"><i class="bi bi-house"></i> หน้าหลัก (Dashboard)</a></li>
+            <!-- <li><a href="adminCheck_Borrower_Status.php"><i class="bi bi-search"></i> ตรวจสอบสถานะผู้กู้</a></li> -->
+            <!-- <li><a href="adminCheck_form_Status.php"><i class="bi bi-file-text"></i> ตรวจสอบสถานะเอกสาร</a></li> -->
             <li><a href="admin_edit_student.php"><i class="bi bi-person"></i> แก้ไขข้อมูลนักศึกษา</a></li>
             <li><a href="adminadd_user.php"><i class="bi bi-person-plus"></i> เพิ่มนักศึกษา</a></li>
             <li><a href="admin_edit_teacher.php"><i class="bi bi-briefcase"></i> แก้ไขข้อมูลอาจารย์</a></li>
             <li><a href="adminadd_teacher.php"><i class="bi bi-person-plus"></i> เพิ่มอาจารย์</a></li>
+            <!-- <li><a href="admin_edit_admin.php"><i class="bi bi-gear"></i> จัดการแอดมิน</a></li> -->
             <li><a href="admin_Check_document_status.php"><i class="bi bi-file-text"></i> ตรวจสอบเอกสารจิตอาสา</a></li>
-            <li><a href="admin_report.php"><i class="bi bi-file-text"></i> รายงานสรุป</a></li>
+            <li><a href="admin_report_1.php"><i class="bi bi-file-text"></i> ตารางสรุปผู้กู้ กยศ.</a></li>
+            <li><a href="admin_report_2.php"><i class="bi bi-file-text"></i> ตารางรายงานสรุป จิตอาสา</a></li>
+
+
+
+
             <li><a href="adminlogout.php" class="logout-btn"><i class="bi bi-box-arrow-right"></i> ออกจากระบบ</a></li>
         </ul>
     </div>

@@ -231,7 +231,8 @@ if ($result->num_rows > 0) {
             <li><a href="admin_edit_teacher.php"><i class="bi bi-briefcase"></i> แก้ไขข้อมูลอาจารย์</a></li>
             <li><a href="adminadd_teacher.php"><i class="bi bi-person-plus"></i> เพิ่มอาจารย์</a></li>
             <li><a href="admin_Check_document_status.php"><i class="bi bi-file-text"></i> ตรวจสอบเอกสารจิตอาสา</a></li>
-            <li><a href="admin_report.php"><i class="bi bi-file-text"></i> รายงานสรุป</a></li>
+            <li><a href="admin_report_1.php"><i class="bi bi-file-text"></i> ตารางสรุปผู้กู้ กยศ.</a></li>
+            <li><a href="admin_report_2.php"><i class="bi bi-file-text"></i> ตารางรายงานสรุป จิตอาสา</a></li>
             <li><a href="adminlogout.php" class="logout-btn"><i class="bi bi-box-arrow-right"></i> ออกจากระบบ</a></li>
         </ul>
     </div>
@@ -259,7 +260,7 @@ if ($result->num_rows > 0) {
                 <div class="col-md-6">
                     <label for="term" class="form-label">เลือกเทอม</label>
                     <select name="term" id="term" class="form-select">
-                        <option value="">-- เลือกเทอม --</option>
+                        <option value="">-- เทอมทั้งหมด --</option>
                         <option value="1" <?php echo (isset($_GET['term']) && $_GET['term'] == '1') ? 'selected' : ''; ?>>1</option>
                         <option value="2" <?php echo (isset($_GET['term']) && $_GET['term'] == '2') ? 'selected' : ''; ?>>2</option>
                     </select>
@@ -268,34 +269,7 @@ if ($result->num_rows > 0) {
             <button type="submit" class="btn btn-primary mt-3">กรองข้อมูล</button>
         </form>
 
-        <!-- Box: ตารางสรุปผู้กู้ กยศ. -->
-        <div class="box">
-            <h2>ตารางสรุปผู้กู้ กยศ.</h2>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>คณะ</th>
-                        <th>สาขา</th>
-                        <th>ปี 1</th>
-                        <th>ปี 2</th>
-                        <th>ปี 3</th>
-                        <th>ปี 4</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($loanSummary as $row): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($row['faculty_name']); ?></td>
-                            <td><?php echo htmlspecialchars($row['department_name']); ?></td>
-                            <td><?php echo htmlspecialchars($row['year_1']); ?></td>
-                            <td><?php echo htmlspecialchars($row['year_2']); ?></td>
-                            <td><?php echo htmlspecialchars($row['year_3']); ?></td>
-                            <td><?php echo htmlspecialchars($row['year_4']); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+        
 
         <!-- Box: ตารางรายงานสรุปจิตอาสา -->
         <div class="box">
