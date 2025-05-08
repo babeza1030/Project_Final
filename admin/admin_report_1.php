@@ -56,19 +56,19 @@ $query = "
         f.faculty_name,
         d.department_name,
         SUM(CASE 
-            WHEN LEFT(s.student_code, 2) = '64' THEN 1 
+            WHEN s.start_year IS NOT NULL AND (YEAR(CURDATE()) - s.start_year) = 1 THEN 1 
             ELSE 0 
         END) AS year_1,
         SUM(CASE 
-            WHEN LEFT(s.student_code, 2) = '63' THEN 1 
+            WHEN s.start_year IS NOT NULL AND (YEAR(CURDATE()) - s.start_year) = 2 THEN 1 
             ELSE 0 
         END) AS year_2,
         SUM(CASE 
-            WHEN LEFT(s.student_code, 2) = '62' THEN 1 
+            WHEN s.start_year IS NOT NULL AND (YEAR(CURDATE()) - s.start_year) = 3 THEN 1 
             ELSE 0 
         END) AS year_3,
         SUM(CASE 
-            WHEN LEFT(s.student_code, 2) = '61' THEN 1 
+            WHEN s.start_year IS NOT NULL AND (YEAR(CURDATE()) - s.start_year) = 4 THEN 1 
             ELSE 0 
         END) AS year_4
     FROM faculty f
@@ -88,6 +88,8 @@ if ($result->num_rows > 0) {
         $loanSummary[] = $row;
     }
 }
+
+// var_dump($loanSummary);
 ?>
 
 
@@ -124,7 +126,7 @@ if ($result->num_rows > 0) {
         .sidebar img {
             display: block;
             width: 80%;
-            margin: 0 auto 10px;
+            margin: 0 auto 10px;    
         }
 
         .sidebar ul {

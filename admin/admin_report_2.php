@@ -7,10 +7,16 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// ดึงข้อมูลจากตาราง activities และ new_user_activities พร้อมกรองปีและเทอม
-$yearFilter = isset($_GET['year']) ? intval($_GET['year']) : null;
-$termFilter = isset($_GET['term']) ? intval($_GET['term']) : null;
+// ดึงปีและเทอมปัจจุบัน
+$currentYear = date("Y");
+$currentMonth = date("n");
+$currentTerm = ($currentMonth >= 1 && $currentMonth <= 6) ? 1 : 2;
 
+// ตั้งค่า yearFilter และ termFilter เป็นค่าปัจจุบัน หากไม่มีการส่งค่าผ่าน $_GET
+$yearFilter = isset($_GET['year']) ? intval($_GET['year']) : $currentYear;
+$termFilter = isset($_GET['term']) ? intval($_GET['term']) : $currentTerm;
+
+// Query สำหรับดึงข้อมูลกิจกรรม
 $query = "
     SELECT a.name AS activity_name, COUNT(nua.activity_id) AS participants
     FROM activities a
@@ -18,7 +24,7 @@ $query = "
     WHERE 1=1
 ";
 
-if ($yearFilter) { // ตรวจสอบว่ามีการเลือกปีหรือไม่
+if ($yearFilter) {
     $query .= " AND YEAR(nua.start_date) = $yearFilter";
 }
 
@@ -245,11 +251,18 @@ if ($result->num_rows > 0) {
                 <div class="col-md-6">
                     <label for="year" class="form-label">เลือกปี</label>
                     <select name="year" id="year" class="form-select">
-                        <option value="">-- ปีทั้งหมด --</option> <!-- เพิ่มตัวเลือกปีทั้งหมด -->
                         <?php
+                        // ดึงปีปัจจุบัน
+                        $currentYear = date("Y");
+
                         // สร้างตัวเลือกปีจาก start_date
                         $yearsQuery = "SELECT DISTINCT YEAR(start_date) AS year FROM new_user_activities ORDER BY year DESC";
                         $yearsResult = $conn->query($yearsQuery);
+
+                        // เพิ่มตัวเลือกปีปัจจุบันเป็นค่าเริ่มต้น
+                        echo "<option value='$currentYear' " . (!isset($_GET['year']) || $_GET['year'] == $currentYear ? 'selected' : '') . "> ปีปัจจุบัน ($currentYear) </option>";
+
+                        // แสดงปีทั้งหมดจากฐานข้อมูล
                         while ($yearRow = $yearsResult->fetch_assoc()) {
                             $selected = (isset($_GET['year']) && $_GET['year'] == $yearRow['year']) ? 'selected' : '';
                             echo "<option value='{$yearRow['year']}' $selected>{$yearRow['year']}</option>";
@@ -260,9 +273,15 @@ if ($result->num_rows > 0) {
                 <div class="col-md-6">
                     <label for="term" class="form-label">เลือกเทอม</label>
                     <select name="term" id="term" class="form-select">
-                        <option value="">-- เทอมทั้งหมด --</option>
-                        <option value="1" <?php echo (isset($_GET['term']) && $_GET['term'] == '1') ? 'selected' : ''; ?>>1</option>
-                        <option value="2" <?php echo (isset($_GET['term']) && $_GET['term'] == '2') ? 'selected' : ''; ?>>2</option>
+                        <?php
+                        // ดึงเทอมปัจจุบัน (สมมติว่าเทอม 1 คือเดือน ม.ค.-มิ.ย. และเทอม 2 คือเดือน ก.ค.-ธ.ค.)
+                        $currentMonth = date("n");
+                        $currentTerm = ($currentMonth >= 1 && $currentMonth <= 6) ? 1 : 2;
+
+                        // เพิ่มตัวเลือกเทอมปัจจุบันเป็นค่าเริ่มต้น
+                        echo "<option value='1' " . (!isset($_GET['term']) || $_GET['term'] == '1' ? 'selected' : '') . ">1</option>";
+                        echo "<option value='2' " . ($_GET['term'] == '2' ? 'selected' : '') . ">2</option>";
+                        ?>
                     </select>
                 </div>
             </div>
