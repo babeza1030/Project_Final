@@ -109,15 +109,7 @@ $faculty_result = $conn->query($faculty_sql);
 
     <!-- Main Content -->
     <div class="main-content">
-        <header class="box_head">
-            <?php if (isset($_SESSION['username'])): ?>
-                <span>ยินดีต้อนรับ , <?php echo $_SESSION['username']; ?></span>
-            <?php endif; ?>
-            
-            <p class="text-right">  วันที่: <?php echo date("d/m/Y"); ?></p>
-            <br>
-
-        </header>
+        <?php include('../admin/admin_header.php'); ?>
         <div class="container mt-4">
             <h2 class="text-center">ตรวจสอบสถานะผู้กู้</h2>
             <p class="text-center">ข้อมูลนักศึกษาที่ลงทะเบียนในระบบ</p>

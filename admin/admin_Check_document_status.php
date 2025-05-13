@@ -30,30 +30,53 @@ if ($year_result->num_rows > 0) {
     rsort($years); // เรียงลำดับจากมากไปน้อย
 }
 
+// ดึงข้อมูลเทอมจากฐานข้อมูล
+$terms_sql = "SELECT DISTINCT terms FROM new_user_activities ORDER BY terms ASC";
+$terms_result = $conn->query($terms_sql);
+
+$terms = [];
+if ($terms_result && $terms_result->num_rows > 0) {
+    while ($term_row = $terms_result->fetch_assoc()) {
+        $terms[] = $term_row['terms'];
+    }
+}
+
 // รับค่าปีและเทอมจาก URL (GET)
 $selected_year = isset($_GET['year']) ? $_GET['year'] : '';
-$selected_term = isset($_GET['term']) ? $_GET['term'] : '';
+$selected_term = isset($_GET['terms']) ? $_GET['terms'] : ''; // เปลี่ยน term เป็น terms
+
+// ดึงปีและเทอมปัจจุบัน
+$current_year = date("Y");
+$current_term = "1"; // กำหนดเทอมปัจจุบัน (ปรับตามเงื่อนไขของระบบคุณ)
+
+// หากไม่มีการเลือกปีหรือเทอม ให้ใช้ค่าปัจจุบัน
+if (empty($selected_year)) {
+    $selected_year = $current_year;
+}
+if (empty($selected_term)) {
+    $selected_term = $current_term;
+}
 
 // ปรับ SQL Query เพื่อกรองข้อมูลตามปีและเทอมที่เลือก
 $sql = "
     SELECT 
         nau.id, 
+        stu.student_code AS username, -- เปลี่ยนจาก nau.username เป็น stu.student_code
+        stu.f_name, 
+        stu.l_name,
         nau.activity_name, 
+        act.max_hours,
         nau.hours AS hours_completed, 
         nau.location, 
         nau.details, 
         nau.image_path, 
-        nau.username, 
-        stu.f_name, 
-        stu.l_name,
-        act.max_hours,
         nau.created_at
     FROM 
         new_user_activities nau
     LEFT JOIN 
-        student stu      
+        student stu
     ON 
-        nau.username = stu.student_id
+        nau.username = stu.student_id -- เชื่อม username กับ student_id
     LEFT JOIN 
         activities act
     ON 
@@ -73,14 +96,14 @@ if (!empty($selected_year)) {
 
 // เพิ่มเงื่อนไขกรองเทอม
 if (!empty($selected_term)) {
-    $sql .= " AND nau.terms = ?"; // ใช้ชื่อคอลัมน์ที่ถูกต้อง
+    $sql .= " AND nau.terms = ?"; // เปลี่ยน term เป็น terms
     $params[] = $selected_term;
     $types .= "s";
 }
 
 // เพิ่มเงื่อนไขกรองชื่อผู้ใช้, ชื่อ, และนามสกุล
 if (!empty($_GET['username'])) {
-    $sql .= " AND (nau.username LIKE ? OR stu.f_name LIKE ? OR stu.l_name LIKE ?)";
+    $sql .= " AND (stu.student_code LIKE ? OR stu.f_name LIKE ? OR stu.l_name LIKE ?)";
     $params[] = '%' . $_GET['username'] . '%';
     $params[] = '%' . $_GET['username'] . '%';
     $params[] = '%' . $_GET['username'] . '%';
@@ -404,15 +427,7 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
     </style>
 </head>
 
-<header class="box_head">
-            <?php if (isset($_SESSION['username'])): ?>
-                <span>ยินดีต้อนรับ , <?php echo $_SESSION['username']; ?></span>
-            <?php endif; ?>
-            
-            <p class="text-right">  วันที่: <?php echo date("d/m/Y"); ?></p>
-            <br>
-
-        </header>
+<?php include('../admin/admin_header.php'); ?>
 <body>
     
     <?php include('../admin/admin_sidebar.php'); ?>
@@ -478,24 +493,10 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
                         </select>
                     </div>
 
-                    <!-- ดึงข้อมูลเทอมจากคอลัมน์ terms -->
-<?php
-// ดึงข้อมูลเทอมจากคอลัมน์ terms
-$term_sql = "SELECT DISTINCT terms FROM new_user_activities ORDER BY terms ASC";
-$term_result = $conn->query($term_sql);
-
-$terms = [];
-if ($term_result->num_rows > 0) {
-    while ($term_row = $term_result->fetch_assoc()) {
-        $terms[] = $term_row['terms'];
-    }
-}
-?>
-
-<!-- ส่วนฟอร์มเลือกเทอม -->
-<div class="col-md-3">
-    <label for="term" class="form-label">เทอม:</label>
-    <select name="term" id="term" class="form-control">
+                    <!-- เลือกเทอม -->
+                   <div class="col-md-3">
+    <label for="terms" class="form-label">เทอม:</label> <!-- เปลี่ยน id และ name เป็น terms -->
+    <select name="terms" id="terms" class="form-control">
         <option value="">-- เลือกเทอม --</option>
         <?php foreach ($terms as $term): ?>
             <option value="<?php echo htmlspecialchars($term); ?>" <?php echo ($selected_term == $term) ? 'selected' : ''; ?>>
@@ -655,20 +656,20 @@ if ($term_result->num_rows > 0) {
             updateFilters();
         });
 
-        document.getElementById('term').addEventListener('change', function () {
+        document.getElementById('terms').addEventListener('change', function () { // เปลี่ยน id เป็น terms
             const selectedTerm = this.value;
             const url = new URL(window.location.href);
             if (selectedTerm) {
-                url.searchParams.set('term', selectedTerm);
+                url.searchParams.set('terms', selectedTerm); // เปลี่ยน term เป็น terms
             } else {
-                url.searchParams.delete('term');
+                url.searchParams.delete('terms'); // เปลี่ยน term เป็น terms
             }
             window.location.href = url.toString();
         });
 
         function updateFilters() {
             const selectedYear = document.getElementById('year').value;
-            const selectedTerm = document.getElementById('term').value;
+            const selectedTerm = document.getElementById('terms').value;
             const url = new URL(window.location.href);
 
             if (selectedYear) {
@@ -678,9 +679,9 @@ if ($term_result->num_rows > 0) {
             }
 
             if (selectedTerm) {
-                url.searchParams.set('term', selectedTerm);
+                url.searchParams.set('terms', selectedTerm);
             } else {
-                url.searchParams.delete('term');
+                url.searchParams.delete('terms');
             }
 
             window.location.href = url.toString();

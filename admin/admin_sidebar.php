@@ -1,3 +1,18 @@
+<?php
+
+// เชื่อมต่อกับฐานข้อมูล
+
+
+include '/xampp/htdocs/Project_Final/server.php';
+
+// ตรวจสอบว่าผู้ใช้ได้เข้าสู่ระบบหรือไม่
+if (!isset($_SESSION['username'])) {
+    header("Location: admin_login.php");
+    exit();
+}
+?>
+
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 <style>
     .sidebar {
@@ -49,6 +64,7 @@
         border-radius: 5px;
     }
 </style>
+
 
 <!-- Sidebar -->
     <div class="sidebar">
