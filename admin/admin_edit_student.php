@@ -59,45 +59,74 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-
         /* ตั้งค่าเนื้อหาหลัก */
-        .main-content {
-            margin-left: 270px; /* เว้นที่สำหรับ Sidebar */
-            padding: 20px;
-            width: calc(100% - 270px);
-            background-color: #f9f9f9; /* เพิ่มพื้นหลังสีอ่อน */
-            min-height: 100vh; /* ให้เนื้อหาครอบคลุมเต็มหน้าจอ */
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05); /* เพิ่มเงาแบบด้านใน */
-            border-radius: 8px; /* เพิ่มมุมโค้ง */
-        }
 
         .box_head {
-            display: flex; /* ใช้ Flexbox */
-            justify-content: right; /* จัดข้อความให้อยู่ซ้าย-ขวา */
-            align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
-            background: linear-gradient(90deg, #f17629, #ff8c42); /* ไล่สี */
+            background-color: #602800;
             color: white;
-            padding: 15px 20px;
-            font-size: 18px;
+            padding: 10px;
+            text-align: center;
+            font-size: 20px;
             font-weight: bold;
-            border-radius: 5px;
+        }
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+            width: calc(100% - 270px);
+            background-color: #f9f9f9;
+            min-height: 100vh;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+        }
+
+        /* หัวข้อ */
+        h2.text-center {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            color: #602800;
+            margin-bottom: 10px;
+        }
+
+        p.text-muted {
+            font-size: 16px;
+            color: #6c757d;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .box_head span {
-            font-size: 20px; /* ขนาดตัวอักษรใหญ่ขึ้น */
-            font-weight: bold;
-        }
-
-        .box_head p {
-            margin: 0;
+        /* ปุ่มเพิ่มข้อมูลนักศึกษา */
+        .btn-add-student-short {
+            background-color: #00008B;
+            color: white;
             font-size: 14px;
-            font-weight: normal;
-            color: #f0f0f0; /* สีข้อความอ่อนลง */
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* ตั้งค่าตาราง */
+        .btn-add-student-short:hover {
+            background-color: #ddd;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transform: translateY(-1px);
+            color:#00008B;
+        }
+
+        .btn-add-student-short i {
+            margin-right: 5px;
+            font-size: 16px;
+        }
+
+        .text-end {
+            padding-right: 15px;
+        }
+
+        /* ตาราง */
         .table {
             width: 100%;
             margin-top: 10px;
@@ -105,309 +134,75 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .table th, .table td {
+        .table th {
+            background-color: #f9f9f9;
+            color: #495057;
+            text-transform: uppercase;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .table td {
             border: 1px solid #ddd;
             padding: 12px;
             text-align: left;
             font-size: 14px;
         }
 
-        .table th {
-            background-color: #f17629; /* สีส้มหลัก */
-            color: white; /* สีตัวอักษร */
-            text-transform: uppercase;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .table-striped tbody tr:nth-of-type(odd) {
-            background-color: #fff7eb; /* สีส้มอ่อน */
-        }
-
-        .table-striped tbody tr:hover {
-            background-color: #ffe4d1; /* สีส้มอ่อนเมื่อ Hover */
-            cursor: pointer;
-        }
+        
 
         /* ปุ่มแก้ไข */
         .btn-edit {
-            background-color: #f17629; /* สีส้มหลัก */
-            color: white; /* สีตัวอักษร */
-            padding: 8px 15px; /* เพิ่มขนาดปุ่ม */
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 14px;
-            transition: 0.3s;
-            border: none;
-        }
-
-        .btn-edit:hover {
-            background-color: #e65c00; /* สีส้มเข้มเมื่อ Hover */
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ Hover */
-        }
-
-        /* ปุ่มกลับไปที่แดชบอร์ด */
-        .btn-secondary {
-            background-color: #6c757d; /* สีเทา */
+            background-color: #f17629;
             color: white;
             padding: 8px 15px;
             border-radius: 5px;
-            text-decoration: none;
             font-size: 14px;
             transition: 0.3s;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268; /* สีเทาเข้มเมื่อ Hover */
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ Hover */
-        }
-
-        /* หัวข้อ */
-        .page-title {
-            font-size: 32px; /* ขนาดตัวอักษรใหญ่ขึ้น */
-            font-weight: bold; /* ตัวอักษรหนา */
-            text-align: center; /* จัดให้อยู่ตรงกลาง */
-            color: #f17629; /* ใช้สีส้มหลัก */
-            margin-bottom: 30px; /* เพิ่มระยะห่างด้านล่าง */
-            text-transform: uppercase; /* ตัวอักษรเป็นตัวพิมพ์ใหญ่ */
-        }
-
-        .box_head {
-            background: #F17629; /* พื้นหลัง */
-            color: white; /* สีตัวอักษร */
-            padding: 15px; /* ระยะห่างภายใน */
-            text-align: right; /* จัดข้อความให้อยู่ด้านขวา */
-            font-size: 18px; /* ขนาดตัวอักษร */
-            font-weight: bold; /* ตัวอักษรหนา */
-            border-radius: 5px; /* มุมโค้ง */
-            margin-bottom: 20px; /* เพิ่มระยะห่างด้านล่าง */
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
-        }
-
-
-
-        h2 {
-            text-align: center;
-            color: #f17629; /* สีส้มหลัก */
-            font-weight: bold;
-            margin-bottom: 30px;
-            text-transform: uppercase; /* ตัวอักษรพิมพ์ใหญ่ */
-        }
-
-        .form-label {
-            font-weight: bold;
-            color: #555;
-        }
-
-        .form-control {
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 16px;
-            transition: 0.3s;
-        }
-
-        .form-control:focus {
-            border-color: #f17629; /* สีส้มหลัก */
-            box-shadow: 0px 0px 5px rgba(241, 118, 41, 0.5); /* เพิ่มเงาเมื่อ Focus */
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-
-        .btn-primary {
-            background: #f17629; /* สีส้มหลัก */
             border: none;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #d65c1e; /* สีส้มเข้มเมื่อ Hover */
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ Hover */
-        }
-
-        .btn-secondary {
-            background: #6c757d; /* สีเทา */
-            border: none;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #545b62; /* สีเทาเข้มเมื่อ Hover */
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ Hover */
-        }
-
-        .alert {
-            margin-top: 20px;
-            font-size: 16px;
-            text-align: center;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                max-width: 90%;
-            }
-        }
-
-        .btn-add-student {
-            background-color: #28a745; /* สีเขียว */
-            color: white; /* สีตัวอักษร */
-            font-size: 16px; /* ขนาดตัวอักษร */
-            font-weight: bold; /* ตัวอักษรหนา */
-            padding: 10px 20px; /* ระยะห่างภายใน */
-            border-radius: 5px; /* มุมโค้ง */
-            border: none; /* ไม่มีเส้นขอบ */
-            transition: all 0.3s ease; /* เพิ่มเอฟเฟกต์ */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
-        }
-
-        .btn-add-student:hover {
-            background-color: #218838; /* สีเขียวเข้มเมื่อ Hover */
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ Hover */
-            transform: translateY(-2px); /* ยกปุ่มขึ้นเล็กน้อย */
-        }
-
-        .btn-add-student i {
-            margin-right: 8px; /* เพิ่มระยะห่างระหว่างไอคอนกับข้อความ */
-            font-size: 18px; /* ขนาดไอคอน */
-        }
-
-        .btn-add-student-short {
-            background-color: #28a745; /* สีเขียว */
-            color: white; /* สีตัวอักษร */
-            font-size: 16px; /* ขนาดตัวอักษร */
-            font-weight: bold; /* ตัวอักษรหนา */
-            padding: 10px 20px; /* ระยะห่างภายใน */
-            border-radius: 5px; /* มุมโค้ง */
-            border: none; /* ไม่มีเส้นขอบ */
-            transition: all 0.3s ease; /* เพิ่มเอฟเฟกต์ */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
-            display: inline-block; /* จัดปุ่มให้อยู่ในบรรทัดเดียว */
-        }
-
-        .btn-add-student-short:hover {
-            background-color: #218838; /* สีเขียวเข้มเมื่อ Hover */
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ Hover */
-            transform: translateY(-2px); /* ยกปุ่มขึ้นเล็กน้อย */
-        }
-
-        .btn-add-student-short i {
-            margin-right: 8px; /* เพิ่มระยะห่างระหว่างไอคอนกับข้อความ */
-            font-size: 18px; /* ขนาดไอคอน */
-        }
-
-        .text-end {
-            padding-right: 15px; /* เว้นขอบด้านขวา */
-        }
-
-        .btn-add-student-short {
-            background-color: #28a745; /* สีเขียว */
-            color: white; /* สีตัวอักษร */
-            font-size: 14px; /* ขนาดตัวอักษร */
-            font-weight: bold; /* ตัวอักษรหนา */
-            padding: 8px 15px; /* ระยะห่างภายใน */
-            border-radius: 5px; /* มุมโค้ง */
-            border: none; /* ไม่มีเส้นขอบ */
-            transition: all 0.3s ease; /* เพิ่มเอฟเฟกต์ */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
-            display: inline-flex; /* จัดปุ่มให้เป็นแนวนอน */
-            align-items: center; /* จัดไอคอนให้อยู่กึ่งกลาง */
-            justify-content: center; /* จัดข้อความให้อยู่ตรงกลาง */
-        }
-
-        .btn-add-student-short:hover {
-            background-color: #218838; /* สีเขียวเข้มเมื่อ Hover */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ Hover */
-            transform: translateY(-1px); /* ยกปุ่มขึ้นเล็กน้อย */
-        }
-
-        .btn-add-student-short i {
-            margin-right: 6px; /* เพิ่มระยะห่างระหว่างไอคอนกับข้อความ */
-            font-size: 16px; /* ขนาดไอคอน */
-        }
-
-        .text-end {
-            padding-right: 15px; /* เว้นขอบด้านขวา */
-        }
-
-        .btn-edit, .btn-view {
-            width: 100%; /* ปรับปุ่มให้กว้างเต็ม */
-        }
-
-        .btn-edit i, .btn-view i {
-            margin-right: 5px; /* เพิ่มระยะห่างระหว่างไอคอนกับข้อความ */
-        }
-
-        .d-flex.flex-column {
-            gap: 10px; /* เพิ่มช่องว่างระหว่างปุ่ม */
-        }
-
-        .d-flex.gap-2 {
-            gap: 10px; /* เพิ่มช่องว่างระหว่างปุ่ม */
-        }
-
-        .btn-edit, .btn-view {
-            display: inline-flex; /* จัดปุ่มให้เป็นแนวนอน */
-            align-items: center; /* จัดไอคอนให้อยู่กึ่งกลาง */
-            justify-content: center; /* จัดข้อความให้อยู่ตรงกลาง */
-        }
-
-        .btn-edit i, .btn-view i {
-            margin-right: 5px; /* เพิ่มระยะห่างระหว่างไอคอนกับข้อความ */
-        }
-
-        .btn-edit, .btn-view {
-            width: 40px; /* กำหนดความกว้าง */
-            height: 40px; /* กำหนดความสูง */
-            display: inline-flex; /* จัดปุ่มให้เป็นแนวนอน */
-            align-items: center; /* จัดไอคอนให้อยู่กึ่งกลาง */
-            justify-content: center; /* จัดข้อความให้อยู่ตรงกลาง */
-            border-radius: 5px; /* มุมโค้งเล็กน้อย */
-            padding: 0; /* ลบ Padding */
-            font-size: 18px; /* ขนาดไอคอน */
-        }
-
-        .btn-edit {
-            background-color: #f17629; /* สีส้ม */
-            color: white; /* สีไอคอน */
-            border: none; /* ไม่มีเส้นขอบ */
-            transition: all 0.3s ease; /* เพิ่มเอฟเฟกต์ */
         }
 
         .btn-edit:hover {
-            background-color: #e65c00; /* สีส้มเข้มเมื่อ Hover */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ Hover */
+            background-color: #e65c00;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
 
+        /* ปุ่มดูรายละเอียด */
         .btn-view {
-            background-color: #17a2b8; /* สีฟ้า */
-            color: white; /* สีไอคอน */
-            border: none; /* ไม่มีเส้นขอบ */
-            transition: all 0.3s ease; /* เพิ่มเอฟเฟกต์ */
+            background-color: #17a2b8;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: 0.3s;
+            border: none;
         }
 
         .btn-view:hover {
-            background-color: #138496; /* สีฟ้าเข้มเมื่อ Hover */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ Hover */
+            background-color: #138496;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-edit, .btn-view {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            padding: 0;
+            font-size: 18px;
         }
 
         .btn-edit i, .btn-view i {
-            font-size: 20px; /* ขนาดไอคอน */
+            font-size: 20px;
         }
 
         .d-flex.gap-2 {
-            gap: 10px; /* เพิ่มช่องว่างระหว่างปุ่ม */
+            gap: 10px;
         }
     </style>
 </head>
@@ -421,8 +216,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- Main Content -->
     <div class="main-content">
-        <h2 class="page-title">แก้ไขข้อมูลนักศึกษา</h2>
-        
+
+        <h2 class="text-center">ข้อมูลนักศึกษา</h2>
+        <p class="text-center text-muted">รายละเอียดข้อมูลนักศึกษา</p>
+
         <!-- ปุ่มเพิ่มข้อมูลนักศึกษา -->
         <div class="text-end mb-3">
             <button type="button" class="btn btn-add-student-short" data-bs-toggle="modal" data-bs-target="#addStudentModal">

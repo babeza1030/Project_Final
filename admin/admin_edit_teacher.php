@@ -247,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_teacher'])) {
 
     <!-- Main Content -->
     <div class="container mt-5">
-        <h2 class="text-center">แก้ไขข้อมูลอาจารย์</h2>
+        <h2 class="text-center">ข้อมูลอาจารย์</h2>
         <p class="text-center text-muted">รายละเอียดข้อมูลอาจารย์</p>
         
         <!-- ปุ่มเปิด Modal -->
