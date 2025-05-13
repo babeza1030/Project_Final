@@ -18,43 +18,89 @@ $result = $conn->query($sql);
 
 // ตรวจสอบการส่งฟอร์ม
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // ตรวจสอบค่าที่ส่งมาจากฟอร์ม
-    var_dump($_POST);
-    var_dump($_FILES);
+    if (isset($_POST['update_teacher'])) {
+        // ฟอร์มแก้ไขข้อมูล
+        $officer_id = $_POST['edit_officer_id'];
+        $f_name = $_POST['edit_f_name'];
+        $l_name = $_POST['edit_l_name'];
+        $campus = $_POST['edit_campus'];
+        $room_number = $_POST['edit_room_number'];
+        $position = $_POST['edit_position'];
 
-    $officer_id = $_POST['officer_id'];
-    $officer_password = password_hash($_POST['officer_password'], PASSWORD_BCRYPT);
-    $f_name = $_POST['f_name'];
-    $l_name = $_POST['l_name'];
-    $campus = $_POST['campus'];
-    $room_number = $_POST['room_number'];
-    $position = $_POST['position'];
+        // อัปเดตข้อมูลในฐานข้อมูล
+        $sql = "UPDATE teacher SET 
+                    f_name = '$f_name', 
+                    l_name = '$l_name', 
+                    campus = '$campus', 
+                    room_number = '$room_number', 
+                    position = '$position' 
+                WHERE officer_id = '$officer_id'";
 
-    // ตรวจสอบและอัปโหลดไฟล์รูปภาพ
-    $profile_image = '';
-    if (isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
-        $uploads_dir = '/xampp/htdocs/Project_Final/uploads';
-        if (!is_dir($uploads_dir)) {
-            mkdir($uploads_dir, 0777, true);
+        if ($conn->query($sql) === TRUE) {
+            echo "<script>alert('แก้ไขข้อมูลสำเร็จ');</script>";
+            echo "<script>window.location.href='admin_edit_teacher.php';</script>";
+        } else {
+            echo "<script>alert('เกิดข้อผิดพลาด: " . $conn->error . "');</script>";
         }
-        $profile_image = $uploads_dir . '/' . basename($_FILES['file']['name']);
-        move_uploaded_file($_FILES['file']['tmp_name'], $profile_image);
+    } elseif (isset($_POST['delete_teacher'])) {
+        // ฟอร์มลบข้อมูล
+        $officer_id = $_POST['officer_id'];
+
+        // ลบข้อมูลในฐานข้อมูล
+        $sql = "DELETE FROM teacher WHERE officer_id = '$officer_id'";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "ลบข้อมูลสำเร็จ";
+        } else {
+            echo "เกิดข้อผิดพลาด: " . $conn->error;
+        }
+        exit();
     } else {
-        echo "File upload failed!";
+        // ฟอร์มเพิ่มข้อมูล
+        $officer_id = $_POST['officer_id'];
+        $officer_password = password_hash($_POST['officer_password'], PASSWORD_BCRYPT);
+        $f_name = $_POST['f_name'];
+        $l_name = $_POST['l_name'];
+        $campus = $_POST['campus'];
+        $room_number = $_POST['room_number'];
+        $position = $_POST['position'];
+
+        // ตรวจสอบและอัปโหลดไฟล์รูปภาพ
+        $profile_image = '';
+        if (isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
+            $uploads_dir = '/xampp/htdocs/Project_Final/uploads';
+            if (!is_dir($uploads_dir)) {
+                mkdir($uploads_dir, 0777, true);
+            }
+            $profile_image = $uploads_dir . '/' . basename($_FILES['file']['name']);
+            move_uploaded_file($_FILES['file']['tmp_name'], $profile_image);
+        } else {
+            echo "File upload failed!";
+        }
+
+        // เพิ่มข้อมูลลงในฐานข้อมูล
+        $sql = "INSERT INTO teacher (officer_id, password, f_name, l_name, campus, room_number, position, profile_image) 
+                VALUES ('$officer_id', '$officer_password', '$f_name', '$l_name', '$campus', '$room_number', '$position', '$profile_image')";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "<script>alert('เพิ่มข้อมูลสำเร็จ');</script>";
+        } else {
+            echo "<script>alert('เกิดข้อผิดพลาด: " . $conn->error . "');</script>";
+        }
     }
+}
 
-    // ตรวจสอบค่าก่อนบันทึก
-    echo "Officer ID: $officer_id, First Name: $f_name, Last Name: $l_name";
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_teacher'])) {
+    $officer_id = $_POST['officer_id'];
 
-    // เพิ่มข้อมูลลงในฐานข้อมูล
-    $sql = "INSERT INTO teacher (officer_id, password, f_name, l_name, campus, room_number, position, profile_image) 
-            VALUES ('$officer_id', '$officer_password', '$f_name', '$l_name', '$campus', '$room_number', '$position', '$profile_image')";
-
+    // ลบข้อมูลจากฐานข้อมูล
+    $sql = "DELETE FROM teacher WHERE officer_id = '$officer_id'";
     if ($conn->query($sql) === TRUE) {
-        echo "<script>alert('เพิ่มข้อมูลสำเร็จ');</script>";
+        echo "ลบข้อมูลสำเร็จ";
     } else {
-        echo "<script>alert('เกิดข้อผิดพลาด: " . $conn->error . "');</script>";
+        echo "เกิดข้อผิดพลาด: " . $conn->error;
     }
+    exit();
 }
 ?>
 
@@ -315,7 +361,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <!-- ปุ่มลบ -->
         <button type='button' class='btn btn-delete' 
-                data-officer-id='" . htmlspecialchars($row['officer_id']) . "'
+                data-officer-id='" . htmlspecialchars($row['officer_id']) . "' 
                 title='ลบ'>
             <i class='bi bi-trash'></i>
         </button>
@@ -348,17 +394,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         const editButtons = document.querySelectorAll('.btn-edit');
         editButtons.forEach(button => {
             button.addEventListener('click', function () {
-                const studentId = this.getAttribute('data-student-id');
-                const studentCode = this.getAttribute('data-student-code');
+                const officerId = this.getAttribute('data-officer-id');
                 const fName = this.getAttribute('data-f-name');
                 const lName = this.getAttribute('data-l-name');
-                const address = this.getAttribute('data-address');
+                const campus = this.getAttribute('data-campus');
+                const roomNumber = this.getAttribute('data-room-number');
+                const position = this.getAttribute('data-position');
 
-                document.getElementById('edit_student_id').value = studentId;
-                document.getElementById('edit_student_code').value = studentCode;
+                document.getElementById('edit_officer_id').value = officerId;
                 document.getElementById('edit_f_name').value = fName;
                 document.getElementById('edit_l_name').value = lName;
-                document.getElementById('edit_address').value = address;
+                document.getElementById('edit_campus').value = campus;
+                document.getElementById('edit_room_number').value = roomNumber;
+                document.getElementById('edit_position').value = position;
             });
         });
 
@@ -383,6 +431,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         });
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButtons = document.querySelectorAll('.btn-delete');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const officerId = this.getAttribute('data-officer-id');
+                if (confirm('คุณต้องการลบข้อมูลอาจารย์นี้หรือไม่?')) {
+                    // ส่งคำขอไปยังเซิร์ฟเวอร์
+                    fetch('admin_edit_teacher.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `delete_teacher=1&officer_id=${officerId}`
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        location.reload(); // รีเฟรชหน้า
+                    })
+                    .catch(error => {
+                        console.error('เกิดข้อผิดพลาด:', error);
+                        alert('ไม่สามารถลบข้อมูลได้');
+                    });
+                }
+            });
+        });
+    });
+</script>
 
 <!-- Modal สำหรับดูรายละเอียด -->
 <div class="modal fade" id="viewTeacherModal" tabindex="-1" aria-labelledby="viewTeacherModalLabel" aria-hidden="true">
@@ -399,6 +476,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p><strong>วิทยาเขต:</strong> <span id="view_campus"></span></p>
                 <p><strong>หมายเลขห้อง:</strong> <span id="view_room_number"></span></p>
                 <p><strong>ตำแหน่ง:</strong> <span id="view_position"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal สำหรับแก้ไขข้อมูล -->
+<div class="modal fade" id="editTeacherModal" tabindex="-1" aria-labelledby="editTeacherModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTeacherModalLabel">แก้ไขข้อมูลอาจารย์</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" enctype="multipart/form-data">
+                    <input type="hidden" id="edit_officer_id" name="edit_officer_id">
+                    <div class="form-group">
+                        <label for="edit_f_name">ชื่อ</label>
+                        <input type="text" class="form-control" id="edit_f_name" name="edit_f_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_l_name">นามสกุล</label>
+                        <input type="text" class="form-control" id="edit_l_name" name="edit_l_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_campus">วิทยาเขต</label>
+                        <input type="text" class="form-control" id="edit_campus" name="edit_campus" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_room_number">หมายเลขห้อง</label>
+                        <input type="text" class="form-control" id="edit_room_number" name="edit_room_number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_position">ตำแหน่ง</label>
+                        <input type="text" class="form-control" id="edit_position" name="edit_position" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3" name="update_teacher">บันทึกการเปลี่ยนแปลง</button>
+                </form>
             </div>
         </div>
     </div>
