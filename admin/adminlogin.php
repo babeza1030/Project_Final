@@ -82,11 +82,13 @@ unset($_SESSION['username']);
 </style>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
 </head>
+
 <body>
     <div class="container">
         <h2>Admin Login</h2>
@@ -113,5 +115,5 @@ unset($_SESSION['username']);
         ?>
     </div>
 </body>
-</html>
 
+</html>

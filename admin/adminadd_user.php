@@ -59,15 +59,24 @@
         }
 
         .box_head {
-            background: #F17629; /* สีพื้นหลัง */
-            color: white; /* สีตัวอักษร */
-            padding: 15px; /* ระยะห่างภายใน */
-            text-align: right; /* จัดข้อความให้อยู่ด้านขวา */
-            font-size: 18px; /* ขนาดตัวอักษร */
-            font-weight: bold; /* ตัวอักษรหนา */
-            border-radius: 5px; /* มุมโค้ง */
-            margin-bottom: 20px; /* เพิ่มระยะห่างด้านล่าง */
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
+            background: #F17629;
+            /* สีพื้นหลัง */
+            color: white;
+            /* สีตัวอักษร */
+            padding: 15px;
+            /* ระยะห่างภายใน */
+            text-align: right;
+            /* จัดข้อความให้อยู่ด้านขวา */
+            font-size: 18px;
+            /* ขนาดตัวอักษร */
+            font-weight: bold;
+            /* ตัวอักษรหนา */
+            border-radius: 5px;
+            /* มุมโค้ง */
+            margin-bottom: 20px;
+            /* เพิ่มระยะห่างด้านล่าง */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            /* เพิ่มเงา */
         }
 
         /* ตั้งค่าเนื้อหาหลัก */
@@ -75,24 +84,29 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #f9f9f9; /* เพิ่มพื้นหลังสีอ่อน */
+            background-color: #f9f9f9;
+            /* เพิ่มพื้นหลังสีอ่อน */
         }
 
         .container {
-            margin-top: 80px; /* เว้นระยะด้านบนสำหรับ box_head */
+            margin-top: 80px;
+            /* เว้นระยะด้านบนสำหรับ box_head */
             max-width: 600px;
             background: white;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            /* เพิ่มเงา */
         }
 
         h2 {
             text-align: center;
-            color: #f17629; /* ใช้สีส้มหลัก */
+            color: #f17629;
+            /* ใช้สีส้มหลัก */
             font-weight: bold;
             margin-bottom: 30px;
-            text-transform: uppercase; /* ตัวอักษรพิมพ์ใหญ่ */
+            text-transform: uppercase;
+            /* ตัวอักษรพิมพ์ใหญ่ */
         }
 
         .form-label {
@@ -109,8 +123,10 @@
         }
 
         .form-control:focus {
-            border-color: #f17629; /* ใช้สีส้มหลัก */
-            box-shadow: 0px 0px 5px rgba(241, 118, 41, 0.5); /* เพิ่มเงาเมื่อ Focus */
+            border-color: #f17629;
+            /* ใช้สีส้มหลัก */
+            box-shadow: 0px 0px 5px rgba(241, 118, 41, 0.5);
+            /* เพิ่มเงาเมื่อ Focus */
         }
 
         button {
@@ -123,25 +139,31 @@
         }
 
         .btn-primary {
-            background: #f17629; /* สีส้มหลัก */
+            background: #f17629;
+            /* สีส้มหลัก */
             border: none;
             color: white;
         }
 
         .btn-primary:hover {
-            background: #d65c1e; /* สีส้มเข้มเมื่อ Hover */
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ Hover */
+            background: #d65c1e;
+            /* สีส้มเข้มเมื่อ Hover */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            /* เพิ่มเงาเมื่อ Hover */
         }
 
         .btn-secondary {
-            background: #6c757d; /* สีเทา */
+            background: #6c757d;
+            /* สีเทา */
             border: none;
             color: white;
         }
 
         .btn-secondary:hover {
-            background: #545b62; /* สีเทาเข้มเมื่อ Hover */
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ Hover */
+            background: #545b62;
+            /* สีเทาเข้มเมื่อ Hover */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            /* เพิ่มเงาเมื่อ Hover */
         }
 
         .alert {
@@ -161,7 +183,7 @@
 <?php include('../admin/admin_header.php'); ?>
 
 <body>
-    
+
     <?php include('../admin/admin_sidebar.php'); ?>
 
     <!-- Main Content -->

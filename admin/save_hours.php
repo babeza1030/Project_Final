@@ -21,4 +21,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<script>alert('ค่าชั่วโมงไม่ถูกต้อง!'); window.location.href='admin_Check_document_status.php';</script>";
     }
 }
-?>

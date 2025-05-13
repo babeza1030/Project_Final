@@ -106,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_teacher'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -113,143 +114,162 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_teacher'])) {
     <link rel="stylesheet" href="../static/css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-    body {
-        font-family: 'Arial', sans-serif;
-        margin: 0;
-        padding: 0;
-        color: #333333; /* สีข้อความหลัก */
-    }
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333333;
+            /* สีข้อความหลัก */
+        }
 
-    .box_head {
-        background: #e67d57; /* สีส้มแดง */
-        color: white;
-        padding: 15px;
-        text-align: right;
-        font-size: 18px;
-        font-weight: bold;
-        border-radius: 5px;
-    }
+        .box_head {
+            background: #e67d57;
+            /* สีส้มแดง */
+            color: white;
+            padding: 15px;
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
 
-    .container {
-        margin-left: 260px; /* ชดเชยพื้นที่ของ Sidebar */
-        padding: 20px;
-        background: #FFFFFF; /* สีขาว */
-        border-radius: 10px;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-        max-width: calc(100% - 280px); /* ปรับความกว้างให้สมดุลกับ Sidebar */
-        margin-top: 20px;
-        color: #333333; /* สีข้อความหลัก */
-    }
+        .container {
+            margin-left: 260px;
+            /* ชดเชยพื้นที่ของ Sidebar */
+            padding: 20px;
+            background: #FFFFFF;
+            /* สีขาว */
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: calc(100% - 280px);
+            /* ปรับความกว้างให้สมดุลกับ Sidebar */
+            margin-top: 20px;
+            color: #333333;
+            /* สีข้อความหลัก */
+        }
 
-    h2 {
-        text-align: center;
-        color: #333333; /* สีข้อความหลัก */
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
+        h2 {
+            text-align: center;
+            color: #333333;
+            /* สีข้อความหลัก */
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
-    p.text-muted {
-        text-align: center;
-        color: #808080; /* สีเทาปานกลาง */
-        font-size: 16px;
-        margin-bottom: 20px;
-    }
+        p.text-muted {
+            text-align: center;
+            color: #808080;
+            /* สีเทาปานกลาง */
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
 
-    table th {
-        background: #e67d57; /* สีส้มแดง */
-        color: #495057;
-        font-weight: bold;
-        text-align: center;
-    }
+        table th {
+            background: #e67d57;
+            /* สีส้มแดง */
+            color: #495057;
+            font-weight: bold;
+            text-align: center;
+        }
 
-    table td {
-        color: #333333; /* สีข้อความหลัก */
-        text-align: center;
-        vertical-align: middle;
-    }
+        table td {
+            color: #333333;
+            /* สีข้อความหลัก */
+            text-align: center;
+            vertical-align: middle;
+        }
 
-    .btn-edit {
-        background-color: #32CD32; /* สีเขียวเข้ม */
-        color: white;
-        border: none;
-        transition: all 0.3s ease;
-        width: 40px;
-        height: 40px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 5px;
-        font-size: 18px;
-    }
+        .btn-edit {
+            background-color: #32CD32;
+            /* สีเขียวเข้ม */
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            font-size: 18px;
+        }
 
-    .btn-edit:hover {
-        background-color: #228B22; /* สีเขียวเข้มกว่าเมื่อ Hover */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    }
+        .btn-edit:hover {
+            background-color: #228B22;
+            /* สีเขียวเข้มกว่าเมื่อ Hover */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
 
-    .btn-view {
-        background-color: #FFD700; /* สีเหลืองเข้ม */
-        color: white;
-        border: none;
-        transition: all 0.3s ease;
-        width: 40px;
-        height: 40px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 5px;
-        font-size: 18px;
-    }
+        .btn-view {
+            background-color: #FFD700;
+            /* สีเหลืองเข้ม */
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            font-size: 18px;
+        }
 
-    .btn-view:hover {
-        background-color: #FFA500; /* สีส้มเข้มเมื่อ Hover */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    }
+        .btn-view:hover {
+            background-color: #FFA500;
+            /* สีส้มเข้มเมื่อ Hover */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
 
-    .btn-delete {
-        background-color: #9370DB; /* สีม่วงเข้ม */
-        color: white;
-        border: none;
-        transition: all 0.3s ease;
-        width: 40px;
-        height: 40px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 5px;
-        font-size: 18px;
-    }
+        .btn-delete {
+            background-color: #9370DB;
+            /* สีม่วงเข้ม */
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            font-size: 18px;
+        }
 
-    .btn-delete:hover {
-        background-color: #6A5ACD; /* สีม่วงเข้มกว่าเมื่อ Hover */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    }
+        .btn-delete:hover {
+            background-color: #6A5ACD;
+            /* สีม่วงเข้มกว่าเมื่อ Hover */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
 
-    .btn-success {
-        background-color: #00008B; /* สีส้มอ่อน */
-        color: #ddd; /* สีฟ้าเข้ม */
-        border: none;
-        transition: all 0.3s ease;
-    }
+        .btn-success {
+            background-color: #00008B;
+            /* สีส้มอ่อน */
+            color: #ddd;
+            /* สีฟ้าเข้ม */
+            border: none;
+            transition: all 0.3s ease;
+        }
 
-    .btn-success:hover {
-        background-color: #e49264; /* สีส้ม */
-        color: white;
-    }
-</style>
+        .btn-success:hover {
+            background-color: #e49264;
+            /* สีส้ม */
+            color: white;
+        }
+    </style>
 </head>
 
 <?php include('../admin/admin_header.php'); ?>
 
 <body>
-    
-<?php include('../admin/admin_sidebar.php'); ?>
+
+    <?php include('../admin/admin_sidebar.php'); ?>
 
     <!-- Main Content -->
     <div class="container mt-5">
         <h2 class="text-center">ข้อมูลอาจารย์</h2>
         <p class="text-center text-muted">รายละเอียดข้อมูลอาจารย์</p>
-        
+
         <!-- ปุ่มเปิด Modal -->
         <div class="mb-3 text-end">
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addTeacherModal">
@@ -319,10 +339,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_teacher'])) {
                 </tr>
             </thead>
             <tbody>
-    <?php
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>
+                <?php
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr>
                     <td>" . htmlspecialchars($row["officer_id"]) . "</td>
                     <td>" . htmlspecialchars($row["f_name"]) . "</td>
                     <td>" . htmlspecialchars($row["l_name"]) . "</td>
@@ -368,12 +388,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_teacher'])) {
     </div>
 </td>
                   </tr>";
-        }
-    } else {
-        echo "<tr><td colspan='7' class='text-center'>ไม่พบข้อมูล</td></tr>";
-    }
-    ?>
-</tbody>
+                    }
+                } else {
+                    echo "<tr><td colspan='7' class='text-center'>ไม่พบข้อมูล</td></tr>";
+                }
+                ?>
+            </tbody>
 
         </table>
         <!-- <a href="admin_dashboard.php" class="btn btn-secondary">กลับไปที่แดชบอร์ด</a> -->
@@ -383,141 +403,142 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_teacher'])) {
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.querySelector('form').addEventListener('submit', function (e) {
+        document.querySelector('form').addEventListener('submit', function(e) {
             $('#addTeacherModal').modal('hide');
             this.reset();
         });
     </script>
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // เติมข้อมูลใน Modal แก้ไข
-        const editButtons = document.querySelectorAll('.btn-edit');
-        editButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const officerId = this.getAttribute('data-officer-id');
-                const fName = this.getAttribute('data-f-name');
-                const lName = this.getAttribute('data-l-name');
-                const campus = this.getAttribute('data-campus');
-                const roomNumber = this.getAttribute('data-room-number');
-                const position = this.getAttribute('data-position');
+        document.addEventListener('DOMContentLoaded', function() {
+            // เติมข้อมูลใน Modal แก้ไข
+            const editButtons = document.querySelectorAll('.btn-edit');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const officerId = this.getAttribute('data-officer-id');
+                    const fName = this.getAttribute('data-f-name');
+                    const lName = this.getAttribute('data-l-name');
+                    const campus = this.getAttribute('data-campus');
+                    const roomNumber = this.getAttribute('data-room-number');
+                    const position = this.getAttribute('data-position');
 
-                document.getElementById('edit_officer_id').value = officerId;
-                document.getElementById('edit_f_name').value = fName;
-                document.getElementById('edit_l_name').value = lName;
-                document.getElementById('edit_campus').value = campus;
-                document.getElementById('edit_room_number').value = roomNumber;
-                document.getElementById('edit_position').value = position;
+                    document.getElementById('edit_officer_id').value = officerId;
+                    document.getElementById('edit_f_name').value = fName;
+                    document.getElementById('edit_l_name').value = lName;
+                    document.getElementById('edit_campus').value = campus;
+                    document.getElementById('edit_room_number').value = roomNumber;
+                    document.getElementById('edit_position').value = position;
+                });
+            });
+
+            // เติมข้อมูลใน Modal ดูรายละเอียด
+            const viewButtons = document.querySelectorAll('.btn-view');
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const officerId = this.getAttribute('data-officer-id');
+                    const fName = this.getAttribute('data-f-name');
+                    const lName = this.getAttribute('data-l-name');
+                    const campus = this.getAttribute('data-campus');
+                    const roomNumber = this.getAttribute('data-room-number');
+                    const position = this.getAttribute('data-position');
+
+                    document.getElementById('view_officer_id').textContent = officerId;
+                    document.getElementById('view_f_name').textContent = fName;
+                    document.getElementById('view_l_name').textContent = lName;
+                    document.getElementById('view_campus').textContent = campus;
+                    document.getElementById('view_room_number').textContent = roomNumber;
+                    document.getElementById('view_position').textContent = position;
+                });
             });
         });
-
-        // เติมข้อมูลใน Modal ดูรายละเอียด
-        const viewButtons = document.querySelectorAll('.btn-view');
-        viewButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const officerId = this.getAttribute('data-officer-id');
-                const fName = this.getAttribute('data-f-name');
-                const lName = this.getAttribute('data-l-name');
-                const campus = this.getAttribute('data-campus');
-                const roomNumber = this.getAttribute('data-room-number');
-                const position = this.getAttribute('data-position');
-
-                document.getElementById('view_officer_id').textContent = officerId;
-                document.getElementById('view_f_name').textContent = fName;
-                document.getElementById('view_l_name').textContent = lName;
-                document.getElementById('view_campus').textContent = campus;
-                document.getElementById('view_room_number').textContent = roomNumber;
-                document.getElementById('view_position').textContent = position;
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButtons = document.querySelectorAll('.btn-delete');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const officerId = this.getAttribute('data-officer-id');
+                    if (confirm('คุณต้องการลบข้อมูลอาจารย์นี้หรือไม่?')) {
+                        // ส่งคำขอไปยังเซิร์ฟเวอร์
+                        fetch('admin_edit_teacher.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: `delete_teacher=1&officer_id=${officerId}`
+                            })
+                            .then(response => response.text())
+                            .then(data => {
+                                alert(data);
+                                location.reload(); // รีเฟรชหน้า
+                            })
+                            .catch(error => {
+                                console.error('เกิดข้อผิดพลาด:', error);
+                                alert('ไม่สามารถลบข้อมูลได้');
+                            });
+                    }
+                });
             });
         });
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const deleteButtons = document.querySelectorAll('.btn-delete');
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const officerId = this.getAttribute('data-officer-id');
-                if (confirm('คุณต้องการลบข้อมูลอาจารย์นี้หรือไม่?')) {
-                    // ส่งคำขอไปยังเซิร์ฟเวอร์
-                    fetch('admin_edit_teacher.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: `delete_teacher=1&officer_id=${officerId}`
-                    })
-                    .then(response => response.text())
-                    .then(data => {
-                        alert(data);
-                        location.reload(); // รีเฟรชหน้า
-                    })
-                    .catch(error => {
-                        console.error('เกิดข้อผิดพลาด:', error);
-                        alert('ไม่สามารถลบข้อมูลได้');
-                    });
-                }
-            });
-        });
-    });
-</script>
+    </script>
 
-<!-- Modal สำหรับดูรายละเอียด -->
-<div class="modal fade" id="viewTeacherModal" tabindex="-1" aria-labelledby="viewTeacherModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="viewTeacherModalLabel">รายละเอียดอาจารย์</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p><strong>เลขบัตรประชาชน:</strong> <span id="view_officer_id"></span></p>
-                <p><strong>ชื่อ:</strong> <span id="view_f_name"></span></p>
-                <p><strong>นามสกุล:</strong> <span id="view_l_name"></span></p>
-                <p><strong>วิทยาเขต:</strong> <span id="view_campus"></span></p>
-                <p><strong>หมายเลขห้อง:</strong> <span id="view_room_number"></span></p>
-                <p><strong>ตำแหน่ง:</strong> <span id="view_position"></span></p>
+    <!-- Modal สำหรับดูรายละเอียด -->
+    <div class="modal fade" id="viewTeacherModal" tabindex="-1" aria-labelledby="viewTeacherModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewTeacherModalLabel">รายละเอียดอาจารย์</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>เลขบัตรประชาชน:</strong> <span id="view_officer_id"></span></p>
+                    <p><strong>ชื่อ:</strong> <span id="view_f_name"></span></p>
+                    <p><strong>นามสกุล:</strong> <span id="view_l_name"></span></p>
+                    <p><strong>วิทยาเขต:</strong> <span id="view_campus"></span></p>
+                    <p><strong>หมายเลขห้อง:</strong> <span id="view_room_number"></span></p>
+                    <p><strong>ตำแหน่ง:</strong> <span id="view_position"></span></p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Modal สำหรับแก้ไขข้อมูล -->
-<div class="modal fade" id="editTeacherModal" tabindex="-1" aria-labelledby="editTeacherModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editTeacherModalLabel">แก้ไขข้อมูลอาจารย์</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="" method="post" enctype="multipart/form-data">
-                    <input type="hidden" id="edit_officer_id" name="edit_officer_id">
-                    <div class="form-group">
-                        <label for="edit_f_name">ชื่อ</label>
-                        <input type="text" class="form-control" id="edit_f_name" name="edit_f_name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit_l_name">นามสกุล</label>
-                        <input type="text" class="form-control" id="edit_l_name" name="edit_l_name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit_campus">วิทยาเขต</label>
-                        <input type="text" class="form-control" id="edit_campus" name="edit_campus" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit_room_number">หมายเลขห้อง</label>
-                        <input type="text" class="form-control" id="edit_room_number" name="edit_room_number" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit_position">ตำแหน่ง</label>
-                        <input type="text" class="form-control" id="edit_position" name="edit_position" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary mt-3" name="update_teacher">บันทึกการเปลี่ยนแปลง</button>
-                </form>
+    <!-- Modal สำหรับแก้ไขข้อมูล -->
+    <div class="modal fade" id="editTeacherModal" tabindex="-1" aria-labelledby="editTeacherModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editTeacherModalLabel">แก้ไขข้อมูลอาจารย์</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" enctype="multipart/form-data">
+                        <input type="hidden" id="edit_officer_id" name="edit_officer_id">
+                        <div class="form-group">
+                            <label for="edit_f_name">ชื่อ</label>
+                            <input type="text" class="form-control" id="edit_f_name" name="edit_f_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_l_name">นามสกุล</label>
+                            <input type="text" class="form-control" id="edit_l_name" name="edit_l_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_campus">วิทยาเขต</label>
+                            <input type="text" class="form-control" id="edit_campus" name="edit_campus" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_room_number">หมายเลขห้อง</label>
+                            <input type="text" class="form-control" id="edit_room_number" name="edit_room_number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_position">ตำแหน่ง</label>
+                            <input type="text" class="form-control" id="edit_position" name="edit_position" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3" name="update_teacher">บันทึกการเปลี่ยนแปลง</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 </body>
+
 </html>

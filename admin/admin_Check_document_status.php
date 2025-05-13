@@ -161,7 +161,6 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
     <link rel="stylesheet" href="../static/css/style.css">
     <link rel="stylesheet" href="../static/css/bootstrap.css">
     <style>
-    
         .box_head {
             background: #F17629;
             color: white;
@@ -171,9 +170,10 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
             font-weight: bold;
             border-radius: 5px;
         }
-        
+
         .container {
-            margin-left: 270px; /* เว้นที่สำหรับ Sidebar */
+            margin-left: 270px;
+            /* เว้นที่สำหรับ Sidebar */
             max-width: 1200px;
             padding: 20px;
             background-color: #ffffff;
@@ -299,26 +299,38 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
         }
 
         .btn-score {
-            background-color: #28a745; /* สีเขียว */
-            color: #ffffff; /* สีตัวอักษร */
+            background-color: #28a745;
+            /* สีเขียว */
+            color: #ffffff;
+            /* สีตัวอักษร */
             border: none;
-            padding: 8px 16px; /* เพิ่ม padding ให้ปุ่มดูใหญ่ขึ้น */
-            border-radius: 5px; /* มุมโค้งมน */
-            font-size: 1rem; /* ขนาดตัวอักษร */
-            font-weight: bold; /* ตัวอักษรหนา */
+            padding: 8px 16px;
+            /* เพิ่ม padding ให้ปุ่มดูใหญ่ขึ้น */
+            border-radius: 5px;
+            /* มุมโค้งมน */
+            font-size: 1rem;
+            /* ขนาดตัวอักษร */
+            font-weight: bold;
+            /* ตัวอักษรหนา */
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease; /* เพิ่มเอฟเฟกต์ */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            /* เพิ่มเอฟเฟกต์ */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            /* เพิ่มเงา */
         }
 
         .btn-score:hover {
-            background-color: #218838; /* สีเขียวเข้มขึ้นเมื่อ hover */
-            transform: scale(1.05); /* ขยายเล็กน้อยเมื่อ hover */
+            background-color: #218838;
+            /* สีเขียวเข้มขึ้นเมื่อ hover */
+            transform: scale(1.05);
+            /* ขยายเล็กน้อยเมื่อ hover */
         }
 
         .btn-score:active {
-            background-color: #1e7e34; /* สีเข้มขึ้นเมื่อคลิก */
-            transform: scale(0.95); /* ย่อเล็กน้อยเมื่อคลิก */
+            background-color: #1e7e34;
+            /* สีเข้มขึ้นเมื่อคลิก */
+            transform: scale(0.95);
+            /* ย่อเล็กน้อยเมื่อคลิก */
         }
 
         .text-center {
@@ -341,8 +353,10 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            overflow: auto; /* เพิ่ม overflow เพื่อให้สามารถเลื่อนดูได้ */
-            z-index: 1000; /* ทำให้ modal อยู่ด้านบนสุด */
+            overflow: auto;
+            /* เพิ่ม overflow เพื่อให้สามารถเลื่อนดูได้ */
+            z-index: 1000;
+            /* ทำให้ modal อยู่ด้านบนสุด */
         }
 
         #detailsModal .modal-content {
@@ -352,8 +366,10 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
             width: 50%;
             border-radius: 8px;
             position: relative;
-            max-height: 90%; /* จำกัดความสูงของ modal */
-            overflow-y: auto; /* เพิ่ม scroll bar สำหรับเนื้อหาใน modal */
+            max-height: 90%;
+            /* จำกัดความสูงของ modal */
+            overflow-y: auto;
+            /* เพิ่ม scroll bar สำหรับเนื้อหาใน modal */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
@@ -372,33 +388,45 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
 
         /* ปรับ Card */
         .card {
-            border: none; /* ลบขอบของ Card */
-            border-radius: 8px; /* มุมโค้งมน */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เงาเพื่อเพิ่มความลึก */
+            border: none;
+            /* ลบขอบของ Card */
+            border-radius: 8px;
+            /* มุมโค้งมน */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            /* เงาเพื่อเพิ่มความลึก */
         }
 
         .card-body {
-            padding: 20px; /* ระยะห่างภายใน Card */
+            padding: 20px;
+            /* ระยะห่างภายใน Card */
         }
 
         .card-title {
-            font-size: 1.5rem; /* ขนาดตัวอักษรใหญ่ */
-            font-weight: bold; /* ตัวอักษรหนา */
+            font-size: 1.5rem;
+            /* ขนาดตัวอักษรใหญ่ */
+            font-weight: bold;
+            /* ตัวอักษรหนา */
         }
 
         .card-text {
-            font-size: 2.5rem; /* ขนาดตัวอักษรใหญ่สำหรับจำนวนเอกสาร */
-            margin-bottom: 10px; /* ระยะห่างระหว่างจำนวนเอกสารกับคำอธิบาย */
+            font-size: 2.5rem;
+            /* ขนาดตัวอักษรใหญ่สำหรับจำนวนเอกสาร */
+            margin-bottom: 10px;
+            /* ระยะห่างระหว่างจำนวนเอกสารกับคำอธิบาย */
         }
 
         .text-muted {
-            font-size: 0.9rem; /* ขนาดตัวอักษรเล็กสำหรับคำอธิบาย */
-            color: rgba(255, 255, 255, 0.7); /* สีอ่อนๆ สำหรับคำอธิบาย */
+            font-size: 0.9rem;
+            /* ขนาดตัวอักษรเล็กสำหรับคำอธิบาย */
+            color: rgba(255, 255, 255, 0.7);
+            /* สีอ่อนๆ สำหรับคำอธิบาย */
         }
 
         .btn-details {
-            background-color: #17a2b8; /* สีฟ้า */
-            color: #ffffff; /* สีตัวอักษร */
+            background-color: #17a2b8;
+            /* สีฟ้า */
+            color: #ffffff;
+            /* สีตัวอักษร */
             border: none;
             padding: 8px 16px;
             border-radius: 5px;
@@ -410,26 +438,34 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
         }
 
         .btn-details:hover {
-            background-color: #138496; /* สีฟ้าเข้มขึ้นเมื่อ hover */
-            transform: scale(1.05); /* ขยายเล็กน้อยเมื่อ hover */
+            background-color: #138496;
+            /* สีฟ้าเข้มขึ้นเมื่อ hover */
+            transform: scale(1.05);
+            /* ขยายเล็กน้อยเมื่อ hover */
         }
 
         .btn-details:active {
-            background-color: #117a8b; /* สีเข้มขึ้นเมื่อคลิก */
-            transform: scale(0.95); /* ย่อเล็กน้อยเมื่อคลิก */
+            background-color: #117a8b;
+            /* สีเข้มขึ้นเมื่อคลิก */
+            transform: scale(0.95);
+            /* ย่อเล็กน้อยเมื่อคลิก */
         }
 
         .card-selected {
-    transform: scale(1.05); /* ขยาย Card ขึ้น 5% */
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* เพิ่มเงา */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* เพิ่มเอฟเฟกต์การเปลี่ยนแปลง */
-}
+            transform: scale(1.05);
+            /* ขยาย Card ขึ้น 5% */
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+            /* เพิ่มเงา */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            /* เพิ่มเอฟเฟกต์การเปลี่ยนแปลง */
+        }
     </style>
 </head>
 
 <?php include('../admin/admin_header.php'); ?>
+
 <body>
-    
+
     <?php include('../admin/admin_sidebar.php'); ?>
 
     <!-- Main Content -->
@@ -494,17 +530,17 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
                     </div>
 
                     <!-- เลือกเทอม -->
-                   <div class="col-md-3">
-    <label for="terms" class="form-label">เทอม:</label> <!-- เปลี่ยน id และ name เป็น terms -->
-    <select name="terms" id="terms" class="form-control">
-        <option value="">-- เลือกเทอม --</option>
-        <?php foreach ($terms as $term): ?>
-            <option value="<?php echo htmlspecialchars($term); ?>" <?php echo ($selected_term == $term) ? 'selected' : ''; ?>>
-                <?php echo htmlspecialchars($term); ?>
-            </option>
-        <?php endforeach; ?>
-    </select>
-</div>
+                    <div class="col-md-3">
+                        <label for="terms" class="form-label">เทอม:</label> <!-- เปลี่ยน id และ name เป็น terms -->
+                        <select name="terms" id="terms" class="form-control">
+                            <option value="">-- เลือกเทอม --</option>
+                            <?php foreach ($terms as $term): ?>
+                                <option value="<?php echo htmlspecialchars($term); ?>" <?php echo ($selected_term == $term) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($term); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
                     <!-- ค้นหาชื่อผู้ใช้ -->
                     <div class="col-md-4">
@@ -557,46 +593,46 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
     </div>
 
     <!-- Modal -->
-<div id="detailsModal">
-    <div class="modal-content">
-        <h3>รายละเอียดกิจกรรม</h3>
-        <p><strong>ชื่อผู้ใช้:</strong> <span id="modal-username"></span></p>
-        <p><strong>ชื่อ-นามสกุล:</strong> <span id="modal-fullname"></span></p>
-        <p><strong>ชื่อจิตกรรม:</strong> <span id="modal-activity"></span></p>
-        <p><strong>ชั่วโมงสูงสุด:</strong> <span id="modal-max-hours"></span></p>
-        <p><strong>ชั่วโมงที่ทำได้:</strong> <span id="modal-hours"></span></p>
-        <p><strong>สถานที่:</strong> <span id="modal-location"></span></p>
-        <p><strong>คำอธิบาย:</strong> <span id="modal-details"></span></p>
-        <p><strong>วันที่สร้าง:</strong> <span id="modal-created-at"></span></p>
-        <p><strong>รูปภาพ:</strong></p>
-        <img id="modal-image" src="" alt="ชื่อกิจกรรม" style="display: none;">
+    <div id="detailsModal">
+        <div class="modal-content">
+            <h3>รายละเอียดกิจกรรม</h3>
+            <p><strong>ชื่อผู้ใช้:</strong> <span id="modal-username"></span></p>
+            <p><strong>ชื่อ-นามสกุล:</strong> <span id="modal-fullname"></span></p>
+            <p><strong>ชื่อจิตกรรม:</strong> <span id="modal-activity"></span></p>
+            <p><strong>ชั่วโมงสูงสุด:</strong> <span id="modal-max-hours"></span></p>
+            <p><strong>ชั่วโมงที่ทำได้:</strong> <span id="modal-hours"></span></p>
+            <p><strong>สถานที่:</strong> <span id="modal-location"></span></p>
+            <p><strong>คำอธิบาย:</strong> <span id="modal-details"></span></p>
+            <p><strong>วันที่สร้าง:</strong> <span id="modal-created-at"></span></p>
+            <p><strong>รูปภาพ:</strong></p>
+            <img id="modal-image" src="" alt="ชื่อกิจกรรม" style="display: none;">
 
-        <!-- ปุ่มเพิ่มคะแนน -->
-        <div class="mt-3">
-            <button onclick="giveScoreInModal()" class="btn btn-score">เพิ่มคะแนน</button>
-        </div>
-
-        <button onclick="closeModal()" class="btn btn-secondary mt-3">ปิด</button>
-    </div>
-</div>
-
-<!-- Modal สำหรับกรอกคะแนน -->
-<div id="scoreModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000;">
-    <div class="modal-content" style="background: #fff; margin: 10% auto; padding: 20px; width: 40%; border-radius: 8px; position: relative;">
-        <h3>เพิ่มคะแนน</h3>
-        <p><strong>ชื่อกิจกรรม:</strong> <span id="score-activity-name"></span></p>
-        <p><strong>ชั่วโมงสูงสุด:</strong> <span id="score-max-hours"></span></p>
-        <form id="scoreForm" method="GET" action="give_score.php">
-            <input type="hidden" name="username" id="score-username">
-            <label for="score-input">กรุณากรอกคะแนน:</label>
-            <input type="number" id="score-input" name="h_hours" class="form-control" min="0" max="" required>
+            <!-- ปุ่มเพิ่มคะแนน -->
             <div class="mt-3">
-                <button type="submit" class="btn btn-primary">ยืนยัน</button>
-                <button type="button" class="btn btn-secondary" onclick="closeScoreModal()">ยกเลิก</button>
+                <button onclick="giveScoreInModal()" class="btn btn-score">เพิ่มคะแนน</button>
             </div>
-        </form>
+
+            <button onclick="closeModal()" class="btn btn-secondary mt-3">ปิด</button>
+        </div>
     </div>
-</div>
+
+    <!-- Modal สำหรับกรอกคะแนน -->
+    <div id="scoreModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000;">
+        <div class="modal-content" style="background: #fff; margin: 10% auto; padding: 20px; width: 40%; border-radius: 8px; position: relative;">
+            <h3>เพิ่มคะแนน</h3>
+            <p><strong>ชื่อกิจกรรม:</strong> <span id="score-activity-name"></span></p>
+            <p><strong>ชั่วโมงสูงสุด:</strong> <span id="score-max-hours"></span></p>
+            <form id="scoreForm" method="GET" action="give_score.php">
+                <input type="hidden" name="username" id="score-username">
+                <label for="score-input">กรุณากรอกคะแนน:</label>
+                <input type="number" id="score-input" name="h_hours" class="form-control" min="0" max="" required>
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">ยืนยัน</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeScoreModal()">ยกเลิก</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script>
         function checkDocument(username, activityName) {
@@ -652,11 +688,11 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
         }
     </script>
     <script>
-        document.getElementById('year').addEventListener('change', function () {
+        document.getElementById('year').addEventListener('change', function() {
             updateFilters();
         });
 
-        document.getElementById('terms').addEventListener('change', function () { // เปลี่ยน id เป็น terms
+        document.getElementById('terms').addEventListener('change', function() { // เปลี่ยน id เป็น terms
             const selectedTerm = this.value;
             const url = new URL(window.location.href);
             if (selectedTerm) {

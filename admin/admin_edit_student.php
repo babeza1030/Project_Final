@@ -13,7 +13,24 @@ if ($conn->connect_error) {
 }
 
 // ดึงข้อมูลจากฐานข้อมูล
-$sql = "SELECT * FROM student";
+$sql = "
+    SELECT 
+        student.*, 
+        father.father_name, father.father_last_name, 
+        mother.mother_name, mother.mother_last_name, 
+        father.father_id, father.father_address, father.father_occupation, father.father_income, 
+        mother.mother_id, mother.mother_address, mother.mother_occupation, mother.mother_income, 
+        father.father_phone_number, mother.mother_phone_number, 
+        endorsee.full_name AS endorsee_name, endorsee.address AS endorsee_address, endorsee.phone_number AS endorsee_phone_number, 
+        department.department_name,
+        faculty.faculty_name
+    FROM student 
+    LEFT JOIN father ON student.father_id = father.father_id 
+    LEFT JOIN mother ON student.mother_id = mother.mother_id 
+    LEFT JOIN endorsee ON student.endorser_id = endorsee.endorser_id
+    LEFT JOIN department ON student.department_id = department.department_id
+    LEFT JOIN faculty ON department.faculty_id = faculty.faculty_id
+";
 $result = $conn->query($sql);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -51,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -69,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 20px;
             font-weight: bold;
         }
+
         .main-content {
             margin-left: 270px;
             padding: 20px;
@@ -114,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: #ddd;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
             transform: translateY(-1px);
-            color:#00008B;
+            color: #00008B;
         }
 
         .btn-add-student-short i {
@@ -152,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 14px;
         }
 
-        
+
 
         /* ปุ่มแก้ไข */
         .btn-edit {
@@ -186,7 +205,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
 
-        .btn-edit, .btn-view {
+        .btn-edit,
+        .btn-view {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -197,7 +217,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 18px;
         }
 
-        .btn-edit i, .btn-view i {
+        .btn-edit i,
+        .btn-view i {
             font-size: 20px;
         }
 
@@ -208,11 +229,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <?php include('../admin/admin_header.php'); ?>
-        
+
 <body>
-    
-        <?php include('../admin/admin_sidebar.php'); ?>
-    
+
+    <?php include('../admin/admin_sidebar.php'); ?>
+
 
     <!-- Main Content -->
     <div class="main-content">
@@ -308,8 +329,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <input type="text" class="form-control" id="edit_address" name="address" required>
                             </div>
                             <div class="mb-3">
-                                <label for="edit_password" class="form-label">รหัสผ่าน</label>
-                                <input type="password" class="form-control" id="edit_password" name="password">
+                                <label for="edit_phone_number" class="form-label">เบอร์โทรศัพท์</label>
+                                <input type="text" class="form-control" id="edit_phone_number" name="phone_number">
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit_email" class="form-label">อีเมล</label>
+                                <input type="email" class="form-control" id="edit_email" name="email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit_father_id" class="form-label">เลขบัตรประชาชนบิดา</label>
+                                <input type="text" class="form-control" id="edit_father_id" name="father_id">
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit_mother_id" class="form-label">เลขบัตรประชาชนมารดา</label>
+                                <input type="text" class="form-control" id="edit_mother_id" name="mother_id">
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit_endorsee_name" class="form-label">ชื่อผู้รับรอง</label>
+                                <input type="text" class="form-control" id="edit_endorsee_name" name="endorsee_name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit_endorsee_address" class="form-label">ที่อยู่ผู้รับรอง</label>
+                                <input type="text" class="form-control" id="edit_endorsee_address" name="endorsee_address">
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit_endorsee_phone" class="form-label">เบอร์โทรศัพท์ผู้รับรอง</label>
+                                <input type="text" class="form-control" id="edit_endorsee_phone" name="endorsee_phone">
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit_faculty" class="form-label">คณะ</label>
+                                <input type="text" class="form-control" id="edit_faculty" name="faculty">
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit_major" class="form-label">สาขา</label>
+                                <input type="text" class="form-control" id="edit_major" name="major">
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit_family_status" class="form-label">สถานภาพครอบครัว</label>
+                                <input type="text" class="form-control" id="edit_family_status" name="family_status">
                             </div>
                             <button type="submit" class="btn btn-primary">บันทึกการเปลี่ยนแปลง</button>
                         </form>
@@ -332,6 +389,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <p><strong>ชื่อ:</strong> <span id="view_f_name"></span></p>
                         <p><strong>นามสกุล:</strong> <span id="view_l_name"></span></p>
                         <p><strong>ที่อยู่:</strong> <span id="view_address"></span></p>
+                        <p><strong>เบอร์โทรศัพท์:</strong> <span id="view_phone_number"></span></p>
+                        <p><strong>อีเมล:</strong> <span id="view_email"></span></p>
+                        <p><strong>ชื่อผู้รับรอง:</strong> <span id="view_endorsee_name"></span></p>
+                        <p><strong>ที่อยู่ผู้รับรอง:</strong> <span id="view_endorsee_address"></span></p>
+                        <p><strong>เบอร์โทรศัพท์ผู้รับรอง:</strong> <span id="view_endorsee_phone"></span></p>
+                        <p><strong>คณะ:</strong> <span id="view_faculty"></span></p>
+                        <p><strong>สาขา:</strong> <span id="view_major"></span></p>
+                        <p><strong>ชื่อบิดา:</strong> <span id="view_father_name"></span></p>
+                        <p><strong>นามสกุลบิดา:</strong> <span id="view_father_last_name"></span></p>
+                        <p><strong>เลขบัตรประชาชนบิดา:</strong> <span id="view_father_id"></span></p>
+                        <p><strong>ที่อยู่บิดา:</strong> <span id="view_father_address"></span></p>
+                        <p><strong>อาชีพบิดา:</strong> <span id="view_father_occupation"></span></p>
+                        <p><strong>เงินเดือนบิดา:</strong> <span id="view_father_income"></span></p>
+                        <p><strong>เบอร์โทรศัพท์บิดา:</strong> <span id="view_father_phone"></span></p>
+                        <p><strong>ชื่อมารดา:</strong> <span id="view_mother_name"></span></p>
+                        <p><strong>นามสกุลมารดา:</strong> <span id="view_mother_last_name"></span></p>
+                        <p><strong>เลขบัตรประชาชนมารดา:</strong> <span id="view_mother_id"></span></p>
+                        <p><strong>ที่อยู่มารดา:</strong> <span id="view_mother_address"></span></p>
+                        <p><strong>อาชีพมารดา:</strong> <span id="view_mother_occupation"></span></p>
+                        <p><strong>เงินเดือนมารดา:</strong> <span id="view_mother_income"></span></p>
+                        <p><strong>เบอร์โทรศัพท์มารดา:</strong> <span id="view_mother_phone"></span></p>
+                        <p><strong>สถานภาพครอบครัว:</strong> <span id="view_family_status"></span></p>
+
                     </div>
                 </div>
             </div>
@@ -348,17 +428,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </tr>
             </thead>
             <tbody>
-    <?php
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>
+                <?php
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr>
                     <td>" . htmlspecialchars($row["student_id"]) . "</td>
                     <td>" . htmlspecialchars($row["student_code"]) . "</td>
                     <td>" . htmlspecialchars($row["f_name"] . " " . $row["l_name"]) . "</td>
                     <td>" . htmlspecialchars($row["address"]) . "</td>
                     <td>
                         <div class='d-flex justify-content-center align-items-center gap-2'>
-                            <!-- ปุ่มแก้ไข -->
                             <button type='button' class='btn btn-edit' 
                                     data-bs-toggle='modal' 
                                     data-bs-target='#editStudentModal'
@@ -367,11 +446,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     data-f-name='" . htmlspecialchars($row["f_name"]) . "'
                                     data-l-name='" . htmlspecialchars($row["l_name"]) . "'
                                     data-address='" . htmlspecialchars($row["address"]) . "'
+                                    data-phone-number='" . htmlspecialchars($row["phone_number"]) . "'
+                                    data-email='" . htmlspecialchars($row["email"]) . "'
+                                    data-father-id='" . htmlspecialchars($row["father_id"]) . "'
+                                    data-mother-id='" . htmlspecialchars($row["mother_id"]) . "'
+                                    data-endorsee-name='" . htmlspecialchars($row["endorsee_name"]) . "'
+                                    data-endorsee-address='" . htmlspecialchars($row["endorsee_address"]) . "'
+                                    data-endorsee-phone='" . htmlspecialchars($row["endorsee_phone_number"]) . "'
+                                    data-faculty='" . htmlspecialchars($row["faculty_name"]) . "'
+                                    data-major='" . htmlspecialchars($row["department_name"]) . "'
+                                    data-family-status='" . htmlspecialchars($row["family_status"]) . "'
                                     title='แก้ไข'>
                                 <i class='bi bi-pencil-square'></i>
                             </button>
-
-                            <!-- ปุ่มดูรายละเอียด -->
                             <button type='button' class='btn btn-view' 
                                     data-bs-toggle='modal' 
                                     data-bs-target='#viewStudentModal'
@@ -380,18 +467,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     data-f-name='" . htmlspecialchars($row["f_name"]) . "'
                                     data-l-name='" . htmlspecialchars($row["l_name"]) . "'
                                     data-address='" . htmlspecialchars($row["address"]) . "'
-                                    title='ดูรายละเอียด'>
+                                    data-phone-number='" . htmlspecialchars($row["phone_number"]) . "'
+                                    data-email='" . htmlspecialchars($row["email"]) . "'
+                                    data-father-name='" . htmlspecialchars($row["father_name"]) . "'
+                                    data-father-last-name='" . htmlspecialchars($row["father_last_name"]) . "'
+                                    data-father-id='" . htmlspecialchars($row["father_id"]) . "'
+                                    data-father-address='" . htmlspecialchars($row["father_address"]) . "'
+                                    data-father-occupation='" . htmlspecialchars($row["father_occupation"]) . "'
+                                    data-father-income='" . htmlspecialchars($row["father_income"]) . "'
+                                    data-father-phone='" . htmlspecialchars($row["father_phone_number"]) . "'
+                                    data-mother-name='" . htmlspecialchars($row["mother_name"]) . "'
+                                    data-mother-last-name='" . htmlspecialchars($row["mother_last_name"]) . "'
+                                    data-mother-id='" . htmlspecialchars($row["mother_id"]) . "'
+                                    data-mother-address='" . htmlspecialchars($row["mother_address"]) . "'
+                                    data-mother-occupation='" . htmlspecialchars($row["mother_occupation"]) . "'
+                                    data-mother-income='" . htmlspecialchars($row["mother_income"]) . "'
+                                    data-mother-phone='" . htmlspecialchars($row["mother_phone_number"]) . "'
+                                    data-family-status='" . htmlspecialchars($row["family_status"]) . "'
+                                                                        data-endorsee-name='" . htmlspecialchars($row["endorsee_name"]) . "'
+                                    data-endorsee-address='" . htmlspecialchars($row["endorsee_address"]) . "'
+                                    data-endorsee-phone='" . htmlspecialchars($row["endorsee_phone_number"]) . "'
+                                    data-faculty='" . htmlspecialchars($row["faculty_name"]) . "'
+                                    data-major='" . htmlspecialchars($row["department_name"]) . "'
+                                    title='ดูข้อมูล'>
                                 <i class='bi bi-eye'></i>
                             </button>
                         </div>
                     </td>
                   </tr>";
-        }
-    } else {
-        echo "<tr><td colspan='5' class='text-center'>ไม่พบข้อมูล</td></tr>";
-    }
-    ?>
-</tbody>
+                    }
+                } else {
+                    echo "<tr><td colspan='5' class='text-center'>ไม่พบข้อมูล</td></tr>";
+                }
+                ?>
+            </tbody>
         </table>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -399,44 +508,109 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const editButtons = document.querySelectorAll('.btn-edit');
-        editButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const studentId = this.getAttribute('data-student-id');
-                const studentCode = this.getAttribute('data-student-code');
-                const fName = this.getAttribute('data-f-name');
-                const lName = this.getAttribute('data-l-name');
-                const address = this.getAttribute('data-address');
+        document.addEventListener('DOMContentLoaded', function() {
+            const editButtons = document.querySelectorAll('.btn-edit');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const studentId = this.getAttribute('data-student-id');
+                    const studentCode = this.getAttribute('data-student-code');
+                    const fName = this.getAttribute('data-f-name');
+                    const lName = this.getAttribute('data-l-name');
+                    const address = this.getAttribute('data-address');
+                    const phoneNumber = this.getAttribute('data-phone-number');
+                    const email = this.getAttribute('data-email');
+                    const fatherId = this.getAttribute('data-father-id');
+                    const motherId = this.getAttribute('data-mother-id');
+                    const endorseeName = this.getAttribute('data-endorsee-name');
+                    const endorseeAddress = this.getAttribute('data-endorsee-address');
+                    const endorseePhone = this.getAttribute('data-endorsee-phone');
+                    const faculty = this.getAttribute('data-faculty');
+                    const major = this.getAttribute('data-major');
+                    const familyStatus = this.getAttribute('data-family-status');
 
-                // เติมข้อมูลในฟอร์ม
-                document.getElementById('edit_student_id').value = studentId;
-                document.getElementById('edit_student_code').value = studentCode;
-                document.getElementById('edit_f_name').value = fName;
-                document.getElementById('edit_l_name').value = lName;
-                document.getElementById('edit_address').value = address;
+                    // เติมข้อมูลในฟอร์ม
+                    document.getElementById('edit_student_id').value = studentId;
+                    document.getElementById('edit_student_code').value = studentCode;
+                    document.getElementById('edit_f_name').value = fName;
+                    document.getElementById('edit_l_name').value = lName;
+                    document.getElementById('edit_address').value = address;
+                    document.getElementById('edit_phone_number').value = phoneNumber;
+                    document.getElementById('edit_email').value = email;
+                    document.getElementById('edit_father_id').value = fatherId;
+                    document.getElementById('edit_mother_id').value = motherId;
+                    document.getElementById('edit_endorsee_name').value = endorseeName;
+                    document.getElementById('edit_endorsee_address').value = endorseeAddress;
+                    document.getElementById('edit_endorsee_phone').value = endorseePhone;
+                    document.getElementById('edit_faculty').value = faculty;
+                    document.getElementById('edit_major').value = major;
+                    document.getElementById('edit_family_status').value = familyStatus;
+                });
+            });
+
+            const viewButtons = document.querySelectorAll('.btn-view');
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const studentId = this.getAttribute('data-student-id');
+                    const studentCode = this.getAttribute('data-student-code');
+                    const fName = this.getAttribute('data-f-name');
+                    const lName = this.getAttribute('data-l-name');
+                    const address = this.getAttribute('data-address');
+                    const phoneNumber = this.getAttribute('data-phone-number');
+                    const email = this.getAttribute('data-email');
+                    const fatherName = this.getAttribute('data-father-name');
+                    const fatherLastName = this.getAttribute('data-father-last-name');
+                    const fatherId = this.getAttribute('data-father-id');
+                    const fatherAddress = this.getAttribute('data-father-address');
+                    const fatherOccupation = this.getAttribute('data-father-occupation');
+                    const fatherIncome = this.getAttribute('data-father-income');
+                    const fatherPhone = this.getAttribute('data-father-phone');
+                    const motherName = this.getAttribute('data-mother-name');
+                    const motherLastName = this.getAttribute('data-mother-last-name');
+                    const motherId = this.getAttribute('data-mother-id');
+                    const motherAddress = this.getAttribute('data-mother-address');
+                    const motherOccupation = this.getAttribute('data-mother-occupation');
+                    const motherIncome = this.getAttribute('data-mother-income');
+                    const motherPhone = this.getAttribute('data-mother-phone');
+                    const familyStatus = this.getAttribute('data-family-status');
+                    const endorseeName = this.getAttribute('data-endorsee-name');
+                    const endorseeAddress = this.getAttribute('data-endorsee-address');
+                    const endorseePhone = this.getAttribute('data-endorsee-phone');
+                    const faculty = this.getAttribute('data-faculty');
+                    const major = this.getAttribute('data-major');
+
+                    // เติมข้อมูลใน Modal
+                    document.getElementById('view_student_id').textContent = studentId;
+                    document.getElementById('view_student_code').textContent = studentCode;
+                    document.getElementById('view_f_name').textContent = fName;
+                    document.getElementById('view_l_name').textContent = lName;
+                    document.getElementById('view_address').textContent = address;
+                    document.getElementById('view_phone_number').textContent = phoneNumber;
+                    document.getElementById('view_email').textContent = email;
+                    document.getElementById('view_father_name').textContent = fatherName;
+                    document.getElementById('view_father_last_name').textContent = fatherLastName;
+                    document.getElementById('view_father_id').textContent = fatherId;
+                    document.getElementById('view_father_address').textContent = fatherAddress;
+                    document.getElementById('view_father_occupation').textContent = fatherOccupation;
+                    document.getElementById('view_father_income').textContent = fatherIncome;
+                    document.getElementById('view_father_phone').textContent = fatherPhone;
+                    document.getElementById('view_mother_name').textContent = motherName;
+                    document.getElementById('view_mother_last_name').textContent = motherLastName;
+                    document.getElementById('view_mother_id').textContent = motherId;
+                    document.getElementById('view_mother_address').textContent = motherAddress;
+                    document.getElementById('view_mother_occupation').textContent = motherOccupation;
+                    document.getElementById('view_mother_income').textContent = motherIncome;
+                    document.getElementById('view_mother_phone').textContent = motherPhone;
+                    document.getElementById('view_family_status').textContent = familyStatus;
+                    document.getElementById('view_faculty').textContent = faculty;
+                    document.getElementById('view_major').textContent = major;
+                    document.getElementById('view_endorsee_name').textContent = endorseeName;
+                    document.getElementById('view_endorsee_address').textContent = endorseeAddress;
+                    document.getElementById('view_endorsee_phone').textContent = endorseePhone;
+
+                });
             });
         });
-
-        const viewButtons = document.querySelectorAll('.btn-view');
-        viewButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const studentId = this.getAttribute('data-student-id');
-                const studentCode = this.getAttribute('data-student-code');
-                const fName = this.getAttribute('data-f-name');
-                const lName = this.getAttribute('data-l-name');
-                const address = this.getAttribute('data-address');
-
-                // เติมข้อมูลในฟอร์ม
-                document.getElementById('view_student_id').textContent = studentId;
-                document.getElementById('view_student_code').textContent = studentCode;
-                document.getElementById('view_f_name').textContent = fName;
-                document.getElementById('view_l_name').textContent = lName;
-                document.getElementById('view_address').textContent = address;
-            });
-        });
-    });
-</script>
+    </script>
 </body>
-</html>
 
+</html>

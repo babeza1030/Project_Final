@@ -70,7 +70,8 @@
 
         /* ตั้งค่าเนื้อหาหลัก */
         .container {
-            margin-left: 270px; /* เว้นที่สำหรับ Sidebar */
+            margin-left: 270px;
+            /* เว้นที่สำหรับ Sidebar */
             max-width: 600px;
             background: white;
             padding: 20px;
@@ -141,8 +142,8 @@
 <?php include('../admin/admin_header.php'); ?>
 
 <body>
-       <!-- Sidebar -->
-       <div class="sidebar">
+    <!-- Sidebar -->
+    <div class="sidebar">
         <img src="../static/img/logo.png" alt="Kasem Bundit University">
         <ul>
             <li><a href="admin_dashboard.php"><i class="bi bi-house"></i> หน้าหลัก (Dashboard)</a></li>

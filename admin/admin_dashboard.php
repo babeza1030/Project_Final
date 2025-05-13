@@ -42,7 +42,6 @@ $faculty_result = $conn->query($faculty_sql);
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-
         /* ตั้งค่าเนื้อหาหลัก */
         .main-content {
             margin-left: 250px;
@@ -78,9 +77,17 @@ $faculty_result = $conn->query($faculty_sql);
             box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        .pending { background-color: #f8c471; }
-        .in-review { background-color: #5d6d7e; }
-        .approved { background-color: #7dcea0; }
+        .pending {
+            background-color: #f8c471;
+        }
+
+        .in-review {
+            background-color: #5d6d7e;
+        }
+
+        .approved {
+            background-color: #7dcea0;
+        }
 
         /* ตาราง */
         .table {
@@ -89,7 +96,8 @@ $faculty_result = $conn->query($faculty_sql);
             border-collapse: collapse;
         }
 
-        .table th, .table td {
+        .table th,
+        .table td {
             border: 1px solid #ddd;
             padding: 10px;
             text-align: left;
@@ -105,7 +113,7 @@ $faculty_result = $conn->query($faculty_sql);
 <body>
 
 
-        <?php include('../admin/admin_sidebar.php'); ?>
+    <?php include('../admin/admin_sidebar.php'); ?>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -113,9 +121,9 @@ $faculty_result = $conn->query($faculty_sql);
         <div class="container mt-4">
             <h2 class="text-center">ตรวจสอบสถานะผู้กู้</h2>
             <p class="text-center">ข้อมูลนักศึกษาที่ลงทะเบียนในระบบ</p>
-        <div class="dashboard text-center">
+            <div class="dashboard text-center">
 
-            <!-- <h1>Admin Dashboard</h1> -->
+                <!-- <h1>Admin Dashboard</h1> -->
 
                 <!-- การ์ดสถานะ
                 <div class="status-container">
@@ -135,117 +143,118 @@ $faculty_result = $conn->query($faculty_sql);
                     </div>
                 </div> -->
 
-            <!-- ค้นหา -->
-            <div class="search-container">
-                <input type="text" id="searchInput" class="form-control" placeholder="ค้นหานักศึกษา...">
-            </div>
+                <!-- ค้นหา -->
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="form-control" placeholder="ค้นหานักศึกษา...">
+                </div>
 
-            <!-- ตารางนักศึกษา -->
+                <!-- ตารางนักศึกษา -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>เลขบัตรประชาชน</th>
+                            <th>รหัสนักศึกษา</th>
+                            <th>ชื่อ-นามสกุล</th>
+                            <th>ที่อยู่</th>
+                            <th>เบอร์โทร</th>
+                            <th>อีเมล</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTable">
+                        <?php while ($row = $result->fetch_assoc()): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($row["student_id"]) ?></td>
+                                <td><?= htmlspecialchars($row["student_code"]) ?></td>
+                                <td><?= htmlspecialchars($row["full_name"]) ?></td>
+                                <td><?= htmlspecialchars($row["address"]) ?></td>
+                                <td><?= htmlspecialchars($row["phone_number"]) ?></td>
+                                <td><?= htmlspecialchars($row["email"]) ?></td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="container mt-4">
+            <h2 class="text-center">ข้อมูลคณะและสาขา</h2>
+            <p class="text-center">รายชื่อคณะและสาขาที่มีในระบบ</p>
+
             <table class="table">
                 <thead>
                     <tr>
-                        <th>เลขบัตรประชาชน</th>
-                        <th>รหัสนักศึกษา</th>
-                        <th>ชื่อ-นามสกุล</th>
-                        <th>ที่อยู่</th>
-                        <th>เบอร์โทร</th>
-                        <th>อีเมล</th>
+                        <th>คณะ</th>
+                        <th>สาขา</th>
                     </tr>
                 </thead>
-                <tbody id="studentTable">
-                    <?php while ($row = $result->fetch_assoc()): ?>
+                <tbody>
+                    <?php while ($row = $faculty_result->fetch_assoc()): ?>
                         <tr>
-                            <td><?= htmlspecialchars($row["student_id"]) ?></td>
-                            <td><?= htmlspecialchars($row["student_code"]) ?></td>
-                            <td><?= htmlspecialchars($row["full_name"]) ?></td>
-                            <td><?= htmlspecialchars($row["address"]) ?></td>
-                            <td><?= htmlspecialchars($row["phone_number"]) ?></td>
-                            <td><?= htmlspecialchars($row["email"]) ?></td>
+                            <td><?= htmlspecialchars($row["faculty_name"]) ?></td>
+                            <td><?= htmlspecialchars($row["department_name"]) ?></td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
             </table>
         </div>
-    </div>
 
-    <div class="container mt-4">
-        <h2 class="text-center">ข้อมูลคณะและสาขา</h2>
-        <p class="text-center">รายชื่อคณะและสาขาที่มีในระบบ</p>
+        <div class="container mt-4">
+            <h2 class="text-center">สถิติข้อมูลนักศึกษา</h2>
+            <canvas id="studentChart" width="400" height="200"></canvas>
+        </div>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>คณะ</th>
-                    <th>สาขา</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($row = $faculty_result->fetch_assoc()): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($row["faculty_name"]) ?></td>
-                        <td><?= htmlspecialchars($row["department_name"]) ?></td>
-                    </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
-    </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const studentData = {
+                labels: ['คณะวิทยาศาสตร์', 'คณะวิศวกรรมศาสตร์', 'คณะบริหารธุรกิจ', 'คณะมนุษยศาสตร์'],
+                datasets: [{
+                    label: 'จำนวนนักศึกษา',
+                    data: [120, 150, 100, 80], // ตัวอย่างข้อมูล
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
 
-    <div class="container mt-4">
-        <h2 class="text-center">สถิติข้อมูลนักศึกษา</h2>
-        <canvas id="studentChart" width="400" height="200"></canvas>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const studentData = {
-            labels: ['คณะวิทยาศาสตร์', 'คณะวิศวกรรมศาสตร์', 'คณะบริหารธุรกิจ', 'คณะมนุษยศาสตร์'],
-            datasets: [{
-                label: 'จำนวนนักศึกษา',
-                data: [120, 150, 100, 80], // ตัวอย่างข้อมูล
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)'
-                ],
-                borderWidth: 1
-            }]
-        };
-
-        const config = {
-            type: 'bar',
-            data: studentData,
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
+            const config = {
+                type: 'bar',
+                data: studentData,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        };
+            };
 
-        const studentChart = new Chart(
-            document.getElementById('studentChart'),
-            config
-        );
-    </script>
+            const studentChart = new Chart(
+                document.getElementById('studentChart'),
+                config
+            );
+        </script>
 
-    <script>
-        document.getElementById("searchInput").addEventListener("keyup", function() {
-            let searchValue = this.value.toLowerCase();
-            let tableRows = document.getElementById("studentTable").getElementsByTagName("tr");
+        <script>
+            document.getElementById("searchInput").addEventListener("keyup", function() {
+                let searchValue = this.value.toLowerCase();
+                let tableRows = document.getElementById("studentTable").getElementsByTagName("tr");
 
-            for (let row of tableRows) {
-                row.style.display = row.innerText.toLowerCase().includes(searchValue) ? "" : "none";
-            }
-        });
-    </script>
+                for (let row of tableRows) {
+                    row.style.display = row.innerText.toLowerCase().includes(searchValue) ? "" : "none";
+                }
+            });
+        </script>
 
 </body>
+
 </html>

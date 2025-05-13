@@ -50,7 +50,7 @@
             }
 
             // ค้นหาข้อมูลผู้ใช้ตาม student_id หรือ student_code
-            
+
             $student_id = $selection;
             $student_code = $selection;
             $f_name = $selection;
@@ -70,7 +70,7 @@
                 <th>Last Name</th>
                 <th>Address</th>
                 </tr></thead>";
-                
+
                 echo "<tbody>";
                 while ($row = $result->fetch_assoc()) {
                     echo "<tr>";

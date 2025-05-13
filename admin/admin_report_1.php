@@ -174,12 +174,12 @@ if ($result->num_rows > 0) {
 <body>
 
     <?php include('../admin/admin_sidebar.php'); ?>
-    
+
 
     <!-- Main Content -->
     <div class="main-content">
 
-        
+
 
         <!-- Box: ตารางสรุปผู้กู้ กยศ. -->
         <div class="box">
@@ -210,9 +210,9 @@ if ($result->num_rows > 0) {
             </table>
         </div>
 
-        
 
-        
+
+
     </div>
 
 

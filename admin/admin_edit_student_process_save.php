@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $l_name = $conn->real_escape_string($_POST['l_name']);
     $address = $conn->real_escape_string($_POST['address']);
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-    
+
     // อัปเดตข้อมูลนักเรียนในฐานข้อมูล
     $sql = "UPDATE student SET student_code='$student_code',password='$password', f_name='$f_name', l_name='$l_name', address='$address' WHERE student_id=$student_id";
 
@@ -33,4 +33,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
     echo "Invalid request method";
 }
-?>

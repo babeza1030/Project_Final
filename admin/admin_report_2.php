@@ -224,7 +224,7 @@ if ($result->num_rows > 0) {
             <button type="submit" class="btn btn-primary mt-3">กรองข้อมูล</button>
         </form>
 
-        
+
 
         <!-- Box: ตารางรายงานสรุปจิตอาสา -->
         <div class="box">
@@ -247,8 +247,8 @@ if ($result->num_rows > 0) {
             </table>
             <!-- สรุปกิจกรรมที่มีผู้เข้าร่วมมากที่สุด -->
             <div id="mostPopularActivity" class="mt-3">
-                <h4>กิจกรรมที่มีผู้เข้าร่วมมากที่สุด: 
-                    <?php echo htmlspecialchars($mostPopularActivity); ?> 
+                <h4>กิจกรรมที่มีผู้เข้าร่วมมากที่สุด:
+                    <?php echo htmlspecialchars($mostPopularActivity); ?>
                     (<?php echo $maxParticipants; ?> คน)
                 </h4>
             </div>
