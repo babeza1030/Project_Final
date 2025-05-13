@@ -59,31 +59,40 @@
         }
 
         .box_head {
-            background: #F17629;
-            color: white;
-            padding: 15px;
-            text-align: right;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 5px;
+            background: #F17629; /* สีพื้นหลัง */
+            color: white; /* สีตัวอักษร */
+            padding: 15px; /* ระยะห่างภายใน */
+            text-align: right; /* จัดข้อความให้อยู่ด้านขวา */
+            font-size: 18px; /* ขนาดตัวอักษร */
+            font-weight: bold; /* ตัวอักษรหนา */
+            border-radius: 5px; /* มุมโค้ง */
+            margin-bottom: 20px; /* เพิ่มระยะห่างด้านล่าง */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
         }
 
         /* ตั้งค่าเนื้อหาหลัก */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9; /* เพิ่มพื้นหลังสีอ่อน */
+        }
+
         .container {
-            margin-left: 270px; /* เว้นที่สำหรับ Sidebar */
+            margin-top: 80px; /* เว้นระยะด้านบนสำหรับ box_head */
             max-width: 600px;
             background: white;
-            padding: 20px;
-            margin-top: 50px;
+            padding: 30px;
             border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
         }
 
         h2 {
             text-align: center;
-            color: #333;
+            color: #f17629; /* ใช้สีส้มหลัก */
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            text-transform: uppercase; /* ตัวอักษรพิมพ์ใหญ่ */
         }
 
         .form-label {
@@ -96,11 +105,12 @@
             border-radius: 5px;
             padding: 10px;
             font-size: 16px;
+            transition: 0.3s;
         }
 
         .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.3);
+            border-color: #f17629; /* ใช้สีส้มหลัก */
+            box-shadow: 0px 0px 5px rgba(241, 118, 41, 0.5); /* เพิ่มเงาเมื่อ Focus */
         }
 
         button {
@@ -113,21 +123,31 @@
         }
 
         .btn-primary {
-            background: #F17629;
+            background: #f17629; /* สีส้มหลัก */
             border: none;
+            color: white;
         }
 
         .btn-primary:hover {
-            background: #d65c1e;
+            background: #d65c1e; /* สีส้มเข้มเมื่อ Hover */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ Hover */
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: #6c757d; /* สีเทา */
             border: none;
+            color: white;
         }
 
         .btn-secondary:hover {
-            background: #545b62;
+            background: #545b62; /* สีเทาเข้มเมื่อ Hover */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ Hover */
+        }
+
+        .alert {
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
@@ -139,71 +159,46 @@
 </head>
 
 <header class="box_head">
-            <?php if (isset($_SESSION['username'])): ?>
-                <span>ยินดีต้อนรับ , <?php echo $_SESSION['username']; ?></span>
-            <?php endif; ?>
-            
-            <p class="text-right">  วันที่: <?php echo date("d/m/Y"); ?></p>
-            <br>
-
-        </header>
+    <?php if (isset($_SESSION['username'])): ?>
+        <span>ยินดีต้อนรับ, <?php echo $_SESSION['username']; ?></span>
+    <?php endif; ?>
+    <p>วันที่: <?php echo date("d/m/Y"); ?></p>
+</header>
 
 <body>
-      <!-- Sidebar -->
-      <div class="sidebar">
-        <img src="../static/img/logo.png" alt="Kasem Bundit University">
-        <ul>
-            <li><a href="admin_dashboard.php"><i class="bi bi-house"></i> หน้าหลัก (Dashboard)</a></li>
-            <!-- <li><a href="adminCheck_Borrower_Status.php"><i class="bi bi-search"></i> ตรวจสอบสถานะผู้กู้</a></li> -->
-            <!-- <li><a href="adminCheck_form_Status.php"><i class="bi bi-file-text"></i> ตรวจสอบสถานะเอกสาร</a></li> -->
-            <li><a href="admin_edit_student.php"><i class="bi bi-person"></i> แก้ไขข้อมูลนักศึกษา</a></li>
-            <li><a href="adminadd_user.php"><i class="bi bi-person-plus"></i> เพิ่มนักศึกษา</a></li>
-            <li><a href="admin_edit_teacher.php"><i class="bi bi-briefcase"></i> แก้ไขข้อมูลอาจารย์</a></li>
-            <li><a href="adminadd_teacher.php"><i class="bi bi-person-plus"></i> เพิ่มอาจารย์</a></li>
-            <!-- <li><a href="admin_edit_admin.php"><i class="bi bi-gear"></i> จัดการแอดมิน</a></li> -->
-            <li><a href="admin_Check_document_status.php"><i class="bi bi-file-text"></i> ตรวจสอบเอกสารจิตอาสา</a></li>
-            <li><a href="admin_report_1.php"><i class="bi bi-file-text"></i> ตารางสรุปผู้กู้ กยศ.</a></li>
-            <li><a href="admin_report_2.php"><i class="bi bi-file-text"></i> ตารางรายงานสรุป จิตอาสา</a></li>
-
-
-
-
-            <li><a href="adminlogout.php" class="logout-btn"><i class="bi bi-box-arrow-right"></i> ออกจากระบบ</a></li>
-        </ul>
-    </div>
+    
+    <?php include('../admin/admin_sidebar.php'); ?>
 
     <!-- Main Content -->
     <div class="container mt-5">
-        <h2 class="text-center">Add New User</h2>
+        <h2 class="text-center">เพิ่มรายชื่อนักศึกษา</h2>
         <form action="adminadd_user.php" method="post">
-
             <div class="form-group">
-                <label for="student_id">student_id</label>
+                <label for="student_id" class="form-label">เลขบัตรประชาชน</label>
                 <input type="text" class="form-control" id="student_id" name="student_id" required>
             </div>
             <div class="form-group">
-                <label for="student_code">student_code</label>
+                <label for="student_code" class="form-label">รหัสนักศึกษา</label>
                 <input type="text" class="form-control" id="student_code" name="student_code" required>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password" class="form-label">รหัสผ่าน</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
             <div class="form-group">
-                <label for="f_name">f_name</label>
+                <label for="f_name" class="form-label">ชื่อ</label>
                 <input type="text" class="form-control" id="f_name" name="f_name" required>
             </div>
             <div class="form-group">
-                <label for="l_name">l_name</label>
+                <label for="l_name" class="form-label">นามสกุล</label>
                 <input type="text" class="form-control" id="l_name" name="l_name" required>
             </div>
             <div class="form-group">
-                <label for="address">address</label>
+                <label for="address" class="form-label">ที่อยู่</label>
                 <input type="text" class="form-control" id="address" name="address" required>
             </div>
-
-            <button type="submit" class="btn btn-primary">Add User</button>
-            <a href="admin_dashboard.php" class="btn btn-secondary">Back</a>
+            <button type="submit" class="btn btn-primary">บันทึก</button>
+            <a href="admin_dashboard.php" class="btn btn-secondary mt-3">กลับ</a>
         </form>
     </div>
 
