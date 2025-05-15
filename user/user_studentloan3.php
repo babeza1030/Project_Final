@@ -21,13 +21,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_SESSION['username'];
     $activity_id = isset($_SESSION['selected_activity']['id']) ? $_SESSION['selected_activity']['id'] : null;
 
-    // คำนวณ start_date และ end_date
-    $start_date = date('Y-m-d'); // วันที่ปัจจุบัน
-    $end_date = date('Y-m-d', strtotime('+14 days', strtotime($start_date))); // +14 วันจาก start_date
+    // กำหนดปีและเทอมปัจจุบัน
+    $current_year = date('Y');
+    $current_month = date('n');
+    $current_terms = ($current_month <= 6) ? 1 : 2;
 
-    // คำนวณ terms
-    $current_month = date('n'); // เดือนปัจจุบัน (1-12)
-    $terms = ($current_month <= 6) ? 1 : 2; // ครึ่งปีแรกเป็นเทอม 1, ครึ่งปีหลังเป็นเทอม 2
+    // ดึง year_id จาก year_table
+    $year_stmt = $conn->prepare("SELECT year_id FROM year_table WHERE year = ? AND terms = ? LIMIT 1");
+    $year_stmt->bind_param("si", $current_year, $current_terms);
+    $year_stmt->execute();
+    $year_stmt->bind_result($year_id);
+    $year_stmt->fetch();
+    $year_stmt->close();
+
+    if (!$year_id) {
+        echo "ไม่พบปีการศึกษานี้ในระบบ กรุณาติดต่อผู้ดูแล";
+        exit;
+    }
+
+    // ดึง student_code จากตาราง student โดยใช้ username
+    $student_stmt = $conn->prepare("SELECT student_code FROM student WHERE student_id = ?");
+    $student_stmt->bind_param("s", $username);
+    $student_stmt->execute();
+    $student_stmt->bind_result($student_code);
+    $student_stmt->fetch();
+    $student_stmt->close();
+
+    if (!$student_code) {
+        echo "ไม่พบข้อมูลรหัสนักศึกษา กรุณาติดต่อผู้ดูแลระบบ";
+        exit;
+    }
 
     // Handle file upload
     $target_dir = "../uploads/";
@@ -49,8 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($uploadOk == 1) {
         if (move_uploaded_file($_FILES["activity_image"]["tmp_name"], $target_file)) {
-            $stmt = $conn->prepare("INSERT INTO new_user_activities (username, activity_id, activity_name, location, details, image_path, start_date, end_date, terms) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("sissssssi", $username, $activity_id, $activity_name, $location, $details, $target_file, $start_date, $end_date, $terms);
+            // เพิ่ม year_id และ student_code ในการบันทึกข้อมูล
+            $stmt = $conn->prepare("INSERT INTO new_user_activities (username, student_code, activity_id, activity_name, location, details, image_path, year_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssissssi", $username, $student_code, $activity_id, $activity_name, $location, $details, $target_file, $year_id);
             if ($stmt->execute()) {
                 echo "<script>alert('บันทึกข้อมูลสำเร็จ'); window.location.href='user_studentloan1.php';</script>";
             } else {

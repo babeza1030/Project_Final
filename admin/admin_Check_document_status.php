@@ -8,8 +8,8 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// ดึงข้อมูลปีจาก start_date และ end_date
-$year_sql = "SELECT DISTINCT YEAR(start_date) AS year_start, YEAR(end_date) AS year_end FROM new_user_activities ORDER BY year_start DESC";
+// ดึงข้อมูลปีและเทอมจาก year_table
+$year_sql = "SELECT DISTINCT year, terms FROM year_table ORDER BY year DESC, terms ASC";
 $year_result = $conn->query($year_sql);
 
 // ตรวจสอบข้อผิดพลาด
@@ -17,28 +17,18 @@ if (!$year_result) {
     die("SQL Error: " . $conn->error);
 }
 
-// ตรวจสอบผลลัพธ์
+// สร้าง array สำหรับปีและเทอม
 $years = [];
-if ($year_result->num_rows > 0) {
-    while ($year_row = $year_result->fetch_assoc()) {
-        $years[] = $year_row['year_start'];
-        if ($year_row['year_end'] !== $year_row['year_start']) {
-            $years[] = $year_row['year_end'];
-        }
-    }
-    $years = array_unique($years); // ลบค่าที่ซ้ำกัน
-    rsort($years); // เรียงลำดับจากมากไปน้อย
-}
-
-// ดึงข้อมูลเทอมจากฐานข้อมูล
-$terms_sql = "SELECT DISTINCT terms FROM new_user_activities ORDER BY terms ASC";
-$terms_result = $conn->query($terms_sql);
-
 $terms = [];
-if ($terms_result && $terms_result->num_rows > 0) {
-    while ($term_row = $terms_result->fetch_assoc()) {
-        $terms[] = $term_row['terms'];
+if ($year_result->num_rows > 0) {
+    while ($row = $year_result->fetch_assoc()) {
+        $years[] = $row['year'];
+        $terms[] = $row['terms'];
     }
+    $years = array_unique($years);
+    $terms = array_unique($terms);
+    rsort($years);
+    sort($terms);
 }
 
 // รับค่าปีและเทอมจาก URL (GET)
@@ -61,7 +51,7 @@ if (empty($selected_term)) {
 $sql = "
     SELECT 
         nau.id, 
-        stu.student_code AS username, -- เปลี่ยนจาก nau.username เป็น stu.student_code
+        stu.student_code AS username,
         stu.f_name, 
         stu.l_name,
         nau.activity_name, 
@@ -70,17 +60,17 @@ $sql = "
         nau.location, 
         nau.details, 
         nau.image_path, 
-        nau.created_at
+        nau.created_at,
+        yt.year,
+        yt.terms
     FROM 
         new_user_activities nau
     LEFT JOIN 
-        student stu
-    ON 
-        nau.username = stu.student_id -- เชื่อม username กับ student_id
+        student stu ON nau.username = stu.student_id
     LEFT JOIN 
-        activities act
-    ON 
-        nau.activity_id = act.id
+        activities act ON nau.activity_id = act.id
+    LEFT JOIN 
+        year_table yt ON nau.year_id = yt.year_id
     WHERE 1=1
 ";
 
@@ -89,14 +79,14 @@ $params = [];
 $types = "";
 
 if (!empty($selected_year)) {
-    $sql .= " AND YEAR(nau.start_date) = ?";
+    $sql .= " AND yt.year = ?";
     $params[] = $selected_year;
     $types .= "s";
 }
 
 // เพิ่มเงื่อนไขกรองเทอม
 if (!empty($selected_term)) {
-    $sql .= " AND nau.terms = ?"; // เปลี่ยน term เป็น terms
+    $sql .= " AND yt.terms = ?";
     $params[] = $selected_term;
     $types .= "s";
 }

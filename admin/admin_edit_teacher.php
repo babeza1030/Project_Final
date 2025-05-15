@@ -285,6 +285,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_teacher'])) {
         <h2 class="page-title">ข้อมูลอาจารย์</h2>
         <p class="page-desc">รายละเอียดข้อมูลอาจารย์</p>
 
+        <!-- ค้นหาอาจารย์ -->
+        <div class="mb-3" style="max-width:400px;">
+            <input type="text" id="searchTeacherInput" class="form-control" placeholder="ค้นหาอาจารย์...">
+        </div>
+
         <!-- ปุ่มเปิด Modal -->
         <div class="mb-3 text-end">
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addTeacherModal">
@@ -353,7 +358,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_teacher'])) {
                     <th>การจัดการ</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="teacherTable">
                 <?php
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
@@ -409,7 +414,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_teacher'])) {
                 }
                 ?>
             </tbody>
-
         </table>
         <!-- <a href="admin_dashboard.php" class="btn btn-secondary">กลับไปที่แดชบอร์ด</a> -->
     </div>
@@ -553,7 +557,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_teacher'])) {
             </div>
         </div>
     </div>
+    <script>
+        // ฟังก์ชันค้นหาอาจารย์ (เหมือน admin_dashboard.php)
+        document.getElementById("searchTeacherInput").addEventListener("keyup", function() {
+            let searchValue = this.value.toLowerCase();
+            let tableRows = document.getElementById("teacherTable").getElementsByTagName("tr");
 
+            for (let row of tableRows) {
+                row.style.display = row.innerText.toLowerCase().includes(searchValue) ? "" : "none";
+            }
+        });
+    </script>
 </body>
 
 </html>

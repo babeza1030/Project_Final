@@ -2,34 +2,46 @@
 session_start();
 include '/xampp/htdocs/Project_Final/server.php';
 
-// ตรวจสอบว่าผู้ใช้ได้เข้าสู่ระบบหรือไม่
 if (!isset($_SESSION['username'])) {
     header("Location: admin_login.php");
     exit();
 }
 
-// รับ ID และคะแนนจาก URL
 if (isset($_GET['username']) && isset($_GET['h_hours'])) {
-    $username = $_GET['username']; // Treat username as a string
+    $username = $_GET['username'];
     $h_hours = intval($_GET['h_hours']);
-    echo "Debug: username = $username, h_hours = $h_hours"; // Debugging line
 
-    // อัปเดตคะแนนในฐานข้อมูล
-    $query = "UPDATE new_user_activities SET h_hours = ? WHERE username = ?";
+    // ตรวจสอบว่ามีข้อมูลก่อน
+    $check = $conn->prepare("SELECT id FROM new_user_activities WHERE username = ?");
+    $check->bind_param("s", $username);
+    $check->execute();
+    $check->store_result();
+    if ($check->num_rows == 0) {
+        echo "ไม่พบ username นี้ในฐานข้อมูล";
+        exit();
+    }
+    $check->close();
+
+    // อัปเดตคะแนน
+    $query = "UPDATE new_user_activities SET hours = ? WHERE username = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("is", $h_hours, $username); // Use "is" for integer and string
+    $stmt->bind_param("is", $h_hours, $username);
 
     if ($stmt->execute()) {
-        echo "บันทึกคะแนนสำเร็จ";
+        if ($stmt->affected_rows > 0) {
+            echo "บันทึกคะแนนสำเร็จ";
+        } else {
+            echo "ไม่มีการเปลี่ยนแปลงคะแนน (อาจเป็นค่าซ้ำ)";
+        }
     } else {
-        echo "เกิดข้อผิดพลาดในการบันทึกคะแนน";
+        echo "เกิดข้อผิดพลาด: " . $stmt->error;
     }
 
     $stmt->close();
     $conn->close();
 } else {
-    echo "ไม่มีการระบุ ID หรือคะแนน";
+    echo "ไม่มีการระบุ username หรือคะแนน";
     exit();
 }
 ?>
-<a href="admin_Check_document_status.php">กลับ</a>
+<a href="admin_Check_document_status.php">← กลับ</a>

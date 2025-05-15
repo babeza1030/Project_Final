@@ -13,23 +13,28 @@ $currentMonth = date("n");
 $currentTerm = ($currentMonth >= 1 && $currentMonth <= 6) ? 1 : 2;
 
 // ตั้งค่า yearFilter และ termFilter เป็นค่าปัจจุบัน หากไม่มีการส่งค่าผ่าน $_GET
-$yearFilter = isset($_GET['year']) ? intval($_GET['year']) : $currentYear;
-$termFilter = isset($_GET['term']) ? intval($_GET['term']) : $currentTerm;
+$yearFilter = isset($_GET['year']) ? $_GET['year'] : $currentYear;
+$termFilter = isset($_GET['terms']) ? $_GET['terms'] : $currentTerm; // เปลี่ยน 'term' เป็น 'terms'
 
-// Query สำหรับดึงข้อมูลกิจกรรม
+// ดึงปีจาก year_table
+$yearsQuery = "SELECT DISTINCT year FROM year_table ORDER BY year DESC";
+$yearsResult = $conn->query($yearsQuery);
+
+// Query สำหรับดึงข้อมูลกิจกรรม (JOIN กับ year_table)
 $query = "
     SELECT a.name AS activity_name, COUNT(nua.activity_id) AS participants
     FROM activities a
     LEFT JOIN new_user_activities nua ON a.id = nua.activity_id
+    LEFT JOIN year_table yt ON nua.year_id = yt.year_id
     WHERE 1=1
 ";
 
 if ($yearFilter) {
-    $query .= " AND YEAR(nua.start_date) = $yearFilter";
+    $query .= " AND yt.year = '$yearFilter'";
 }
 
 if ($termFilter) {
-    $query .= " AND nua.terms = $termFilter";
+    $query .= " AND yt.terms = '$termFilter'";
 }
 
 $query .= "
@@ -199,28 +204,27 @@ if ($result->num_rows > 0) {
             <form method="GET" class="mb-3">
                 <div class="row align-items-end">
                     <div class="col-md-4">
-                        <label for="year" class="form-label">เลือกปี</label>
+                        <label for="year" class="form-label"></label>
                         <select name="year" id="year" class="form-select">
                             <?php
-                            $currentYear = date("Y");
-                            $yearsQuery = "SELECT DISTINCT YEAR(start_date) AS year FROM new_user_activities ORDER BY year DESC";
-                            $yearsResult = $conn->query($yearsQuery);
-                            echo "<option value='$currentYear' " . (!isset($_GET['year']) || $_GET['year'] == $currentYear ? 'selected' : '') . "> ปีปัจจุบัน ($currentYear) </option>";
-                            while ($yearRow = $yearsResult->fetch_assoc()) {
-                                $selected = (isset($_GET['year']) && $_GET['year'] == $yearRow['year']) ? 'selected' : '';
+                            // กำหนดปีปัจจุบันเป็น default หากไม่ได้เลือก
+                            foreach ($yearsResult as $yearRow) {
+                                $selected = (isset($_GET['year']) && $_GET['year'] == $yearRow['year']) || (!isset($_GET['year']) && $yearRow['year'] == $currentYear) ? 'selected' : '';
                                 echo "<option value='{$yearRow['year']}' $selected>{$yearRow['year']}</option>";
                             }
                             ?>
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <label for="term" class="form-label">เลือกเทอม</label>
-                        <select name="term" id="term" class="form-select">
+                        <label for="terms" class="form-label"></label>
+                        <select name="terms" id="terms" class="form-select">
                             <?php
-                            $currentMonth = date("n");
-                            $currentTerm = ($currentMonth >= 1 && $currentMonth <= 6) ? 1 : 2;
-                            echo "<option value='1' " . (!isset($_GET['term']) || $_GET['term'] == '1' ? 'selected' : '') . ">1</option>";
-                            echo "<option value='2' " . ($_GET['term'] == '2' ? 'selected' : '') . ">2</option>";
+                            // กำหนดเทอมปัจจุบันเป็น default หากไม่ได้เลือก
+                            $termOptions = [1, 2];
+                            foreach ($termOptions as $term) {
+                                $selected = (isset($_GET['terms']) && $_GET['terms'] == $term) || (!isset($_GET['terms']) && $term == $currentTerm) ? 'selected' : '';
+                                echo "<option value='$term' $selected>$term</option>";
+                            }
                             ?>
                         </select>
                     </div>

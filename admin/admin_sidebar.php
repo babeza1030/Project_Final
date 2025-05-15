@@ -76,6 +76,7 @@ if (!isset($_SESSION['username'])) {
         <li><a href="admin_Check_document_status.php"><i class="bi bi-file-text"></i> ตรวจสอบเอกสารจิตอาสา</a></li>
         <li><a href="admin_report_1.php"><i class="bi bi-bar-chart"></i> ตารางสรุปผู้กู้ กยศ.</a></li>
         <li><a href="admin_report_2.php"><i class="bi bi-clipboard-data"></i> ตารางรายงานสรุป จิตอาสา</a></li>
+        <li><a href="admin_add_year.php"><i class="bi bi-clipboard-data"></i>เพิ่มปีการศึกษา</a></li>
         <li><a href="adminlogout.php" class="logout-btn"><i class="bi bi-box-arrow-right"></i> ออกจากระบบ</a></li>
     </ul>
 </div>

@@ -18,14 +18,14 @@ echo "Session username: " . htmlspecialchars($_SESSION['username']);
 // รับค่าปีจาก URL (GET)
 $selected_year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 
-// กำหนดเทอมปัจจุบัน (สมมติว่าเทอม 1 คือเดือน 1-6 และเทอม 2 คือเดือน 7-12)
-$current_month = date('n'); // ดึงเดือนปัจจุบัน (1-12)
+// กำหนดเทอมปัจจุบัน
+$current_month = date('n');
 $current_term = ($current_month >= 1 && $current_month <= 6) ? '1' : '2';
 
 // รับค่า terms จาก URL (GET) หรือใช้เทอมปัจจุบันเป็นค่าเริ่มต้น
 $selected_terms = isset($_GET['terms']) ? $_GET['terms'] : $current_term;
 
-// ปรับ SQL Query เพื่อกรองข้อมูลตามปีที่เลือก
+// ปรับ SQL Query เพื่อกรองข้อมูลตามปีและเทอมที่เลือก (JOIN กับ year_table)
 $sql = "
     SELECT 
         nau.id, 
@@ -41,24 +41,22 @@ $sql = "
     FROM 
         new_user_activities nau
     LEFT JOIN 
-        student stu      
-    ON 
-        nau.username = stu.student_id
+        student stu ON nau.username = stu.student_id
     LEFT JOIN 
-        activities act
-    ON 
-        nau.activity_id = act.id
+        activities act ON nau.activity_id = act.id
+    LEFT JOIN 
+        year_table yt ON nau.year_id = yt.year_id
     WHERE 
         nau.username = ?
 ";
 
 // เพิ่มเงื่อนไขกรองปี
 if (!empty($selected_year)) {
-    $sql .= " AND YEAR(nau.start_date) = ?";
+    $sql .= " AND yt.year = ?";
 }
 
 if (!empty($selected_terms)) {
-    $sql .= " AND nau.terms = ?";
+    $sql .= " AND yt.terms = ?";
 }
 
 $sql .= " ORDER BY nau.created_at DESC";
@@ -88,39 +86,26 @@ $stmt->execute();
 // ดึงผลลัพธ์
 $result = $stmt->get_result();
 
-// ดึงข้อมูลปีจาก start_date และ end_date
-$year_sql = "SELECT DISTINCT YEAR(start_date) AS year_start, YEAR(end_date) AS year_end FROM new_user_activities ORDER BY year_start DESC";
+// ดึงข้อมูลปีจาก year_table
+$year_sql = "SELECT DISTINCT year FROM year_table ORDER BY year DESC";
 $year_result = $conn->query($year_sql);
 
 // ตรวจสอบผลลัพธ์
 $years = [];
 if ($year_result->num_rows > 0) {
     while ($year_row = $year_result->fetch_assoc()) {
-        $years[] = $year_row['year_start'];
-        if ($year_row['year_end'] !== $year_row['year_start']) {
-            $years[] = $year_row['year_end'];
-        }
+        $years[] = $year_row['year'];
     }
-    $years = array_unique($years); // ลบค่าที่ซ้ำกัน
-    rsort($years); // เรียงลำดับจากมากไปน้อย
 }
 $current_year = date('Y');
 if (!in_array($current_year, $years)) {
     $years[] = $current_year;
 }
-rsort($years); // เรียงลำดับจากมากไปน้อย
+rsort($years);
 
-// ดึงค่า terms จากตาราง new_user_activities
-$terms_sql = "SELECT DISTINCT terms FROM new_user_activities WHERE username = ?";
-$terms_stmt = $conn->prepare($terms_sql);
-
-if (!$terms_stmt) {
-    die("Error preparing terms SQL: " . $conn->error);
-}
-
-$terms_stmt->bind_param("s", $_SESSION['username']);
-$terms_stmt->execute();
-$terms_result = $terms_stmt->get_result();
+// ดึงค่า terms จาก year_table
+$terms_sql = "SELECT DISTINCT terms FROM year_table ORDER BY terms ASC";
+$terms_result = $conn->query($terms_sql);
 
 $terms = [];
 if ($terms_result->num_rows > 0) {

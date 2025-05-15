@@ -248,6 +248,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <!-- <hr style="border-top:2px solid #FC6600; width:60px; margin:0;"> -->
         </div>
 
+        <!-- ค้นหานักศึกษา -->
+        <div class="mb-3" style="max-width:400px;">
+            <input type="text" id="searchStudentInput" class="form-control" placeholder="ค้นหานักศึกษา...">
+        </div>
+
         <!-- ปุ่มเพิ่มข้อมูลนักศึกษา -->
         <div class="text-end mb-3">
             <button type="button" class="btn btn-add-student-short" data-bs-toggle="modal" data-bs-target="#addStudentModal">
@@ -263,7 +268,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <h5 class="modal-title" id="addStudentModalLabel">เพิ่มข้อมูลนักศึกษา</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body">       
                         <form action="" method="post" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="student_id" class="form-label">เลขบัตรประชาชน</label>
@@ -459,7 +464,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <th>ตัวเลือก</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="studentTable">
                 <?php
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
@@ -516,7 +521,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     data-mother-income='" . htmlspecialchars($row["mother_income"]) . "'
                                     data-mother-phone='" . htmlspecialchars($row["mother_phone_number"]) . "'
                                     data-family-status='" . htmlspecialchars($row["family_status"]) . "'
-                                                                        data-endorsee-name='" . htmlspecialchars($row["endorsee_name"]) . "'
+                                    data-endorsee-name='" . htmlspecialchars($row["endorsee_name"]) . "'
                                     data-endorsee-address='" . htmlspecialchars($row["endorsee_address"]) . "'
                                     data-endorsee-phone='" . htmlspecialchars($row["endorsee_phone_number"]) . "'
                                     data-faculty='" . htmlspecialchars($row["faculty_name"]) . "'
@@ -641,6 +646,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 });
             });
+        });
+
+        // ฟังก์ชันค้นหานักศึกษา (เหมือน admin_dashboard.php)
+        document.getElementById("searchStudentInput").addEventListener("keyup", function() {
+            let searchValue = this.value.toLowerCase();
+            let tableRows = document.getElementById("studentTable").getElementsByTagName("tr");
+
+            for (let row of tableRows) {
+                row.style.display = row.innerText.toLowerCase().includes(searchValue) ? "" : "none";
+            }
         });
     </script>
 </body>
