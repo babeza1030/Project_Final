@@ -149,7 +149,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             width: 100%;
             margin-top: 10px;
             border-collapse: collapse;
-            background-color: #fff; /* พื้นหลังขาว */
+            background-color: #fff;
+            /* พื้นหลังขาว */
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -159,7 +160,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: #fff;
             color: #00008B;
             text-transform: uppercase;
-            font-size: 18px;   /* เพิ่มขนาดหัวตาราง */
+            font-size: 18px;
+            /* เพิ่มขนาดหัวตาราง */
             font-weight: bold;
             padding-top: 16px;
             padding-bottom: 16px;
@@ -172,13 +174,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 14px;
         }
 
-        .table-striped > tbody > tr {
-            background-color: #fff !important; /* ไม่มีสลับสี */
+        .table-striped>tbody>tr {
+            background-color: #fff !important;
+            /* ไม่มีสลับสี */
         }
 
         /* ปุ่มแก้ไข */
         .btn-edit {
-            background-color: #f1c40f ;
+            background-color: #f1c40f;
             color: #fff;
             padding: 8px 15px;
             border-radius: 5px;
@@ -233,6 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <?php include('../admin/admin_header.php'); ?>
+
 <body>
     <?php include('../admin/admin_sidebar.php'); ?>
 
@@ -387,33 +391,58 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p><strong>เลขบัตรประชาชน:</strong> <span id="view_student_id"></span></p>
-                        <p><strong>รหัสนักศึกษา:</strong> <span id="view_student_code"></span></p>
-                        <p><strong>ชื่อ:</strong> <span id="view_f_name"></span></p>
-                        <p><strong>นามสกุล:</strong> <span id="view_l_name"></span></p>
-                        <p><strong>ที่อยู่:</strong> <span id="view_address"></span></p>
-                        <p><strong>เบอร์โทรศัพท์:</strong> <span id="view_phone_number"></span></p>
-                        <p><strong>อีเมล:</strong> <span id="view_email"></span></p>
-                        <p><strong>ชื่อผู้รับรอง:</strong> <span id="view_endorsee_name"></span></p>
-                        <p><strong>ที่อยู่ผู้รับรอง:</strong> <span id="view_endorsee_address"></span></p>
-                        <p><strong>เบอร์โทรศัพท์ผู้รับรอง:</strong> <span id="view_endorsee_phone"></span></p>
-                        <p><strong>คณะ:</strong> <span id="view_faculty"></span></p>
-                        <p><strong>สาขา:</strong> <span id="view_major"></span></p>
-                        <p><strong>ชื่อบิดา:</strong> <span id="view_father_name"></span></p>
-                        <p><strong>นามสกุลบิดา:</strong> <span id="view_father_last_name"></span></p>
-                        <p><strong>เลขบัตรประชาชนบิดา:</strong> <span id="view_father_id"></span></p>
-                        <p><strong>ที่อยู่บิดา:</strong> <span id="view_father_address"></span></p>
-                        <p><strong>อาชีพบิดา:</strong> <span id="view_father_occupation"></span></p>
-                        <p><strong>เงินเดือนบิดา:</strong> <span id="view_father_income"></span></p>
-                        <p><strong>เบอร์โทรศัพท์บิดา:</strong> <span id="view_father_phone"></span></p>
-                        <p><strong>ชื่อมารดา:</strong> <span id="view_mother_name"></span></p>
-                        <p><strong>นามสกุลมารดา:</strong> <span id="view_mother_last_name"></span></p>
-                        <p><strong>เลขบัตรประชาชนมารดา:</strong> <span id="view_mother_id"></span></p>
-                        <p><strong>ที่อยู่มารดา:</strong> <span id="view_mother_address"></span></p>
-                        <p><strong>อาชีพมารดา:</strong> <span id="view_mother_occupation"></span></p>
-                        <p><strong>เงินเดือนมารดา:</strong> <span id="view_mother_income"></span></p>
-                        <p><strong>เบอร์โทรศัพท์มารดา:</strong> <span id="view_mother_phone"></span></p>
-                        <p><strong>สถานภาพครอบครัว:</strong> <span id="view_family_status"></span></p>
+                        <div class="card mb-3" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 20px;">
+                            <div class="card-body ">
+                                <div class="row mb-2">
+                                    <div class="col-md-6 ">
+                                        <p><strong>เลขบัตรประชาชน:</strong> <span id="view_student_id"></span></p>
+                                        <p><strong>รหัสนักศึกษา:</strong> <span id="view_student_code"></span></p>
+                                        <p><strong>ชื่อ:</strong> <span id="view_f_name"></span></p>
+                                        <p><strong>นามสกุล:</strong> <span id="view_l_name"></span></p>
+                                        <p><strong>ที่อยู่:</strong> <span id="view_address"></span></p>
+                                        <p><strong>เบอร์โทรศัพท์:</strong> <span id="view_phone_number"></span></p>
+                                        <p><strong>อีเมล:</strong> <span id="view_email"></span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>ชื่อผู้รับรอง:</strong> <span id="view_endorsee_name"></span></p>
+                                        <p><strong>ที่อยู่ผู้รับรอง:</strong> <span id="view_endorsee_address"></span></p>
+                                        <p><strong>เบอร์โทรศัพท์ผู้รับรอง:</strong> <span id="view_endorsee_phone"></span></p>
+                                        <p><strong>คณะ:</strong> <span id="view_faculty"></span></p>
+                                        <p><strong>สาขา:</strong> <span id="view_major"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mb-3" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                            <div class="card-header bg-primary text-white" style="border-radius: 8px 8px 0 0; font-weight: bold;background: linear-gradient(90deg, #FC6600 60%, #FDA50F 100%);">
+                                ข้อมูลบิดา
+                            </div>
+                            <div class="card-body">
+                                <p><strong>ชื่อบิดา:</strong> <span id="view_father_name"></span></p>
+                                <p><strong>นามสกุลบิดา:</strong> <span id="view_father_last_name"></span></p>
+                                <p><strong>เลขบัตรประชาชนบิดา:</strong> <span id="view_father_id"></span></p>
+                                <p><strong>ที่อยู่บิดา:</strong> <span id="view_father_address"></span></p>
+                                <p><strong>อาชีพบิดา:</strong> <span id="view_father_occupation"></span></p>
+                                <p><strong>เงินเดือนบิดา:</strong> <span id="view_father_income"></span></p>
+                                <p><strong>เบอร์โทรศัพท์บิดา:</strong> <span id="view_father_phone"></span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-3" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                            <div class="card-header bg-primary text-white" style="border-radius: 8px 8px 0 0; font-weight: bold;background: linear-gradient(90deg, #FC6600 60%, #FDA50F 100%);">
+                                ข้อมูลมารดา
+                            </div>
+                            <div class="card-body">
+                                <p><strong>ชื่อมารดา:</strong> <span id="view_mother_name"></span></p>
+                                <p><strong>นามสกุลมารดา:</strong> <span id="view_mother_last_name"></span></p>
+                                <p><strong>เลขบัตรประชาชนมารดา:</strong> <span id="view_mother_id"></span></p>
+                                <p><strong>ที่อยู่มารดา:</strong> <span id="view_mother_address"></span></p>
+                                <p><strong>อาชีพมารดา:</strong> <span id="view_mother_occupation"></span></p>
+                                <p><strong>เงินเดือนมารดา:</strong> <span id="view_mother_income"></span></p>
+                                <p><strong>เบอร์โทรศัพท์มารดา:</strong> <span id="view_mother_phone"></span></p>
+                                <p><strong>สถานภาพครอบครัว:</strong> <span id="view_family_status"></span></p>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
