@@ -256,7 +256,7 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
         }
 
         .btn-primary {
-            background-color: #007bff;
+            background-color: #00008B;
             color: #ffffff;
             border: none;
             padding: 8px 12px;
@@ -271,7 +271,7 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
         }
 
         .btn-primary:active {
-            background-color: #004085;
+            background-color: #00008B;
             transform: scale(0.95);
         }
 
@@ -423,7 +423,7 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
         }
 
         .btn-details {
-            background-color: #17a2b8;
+            background-color: #00008B;
             /* สีฟ้า */
             color: #ffffff;
             /* สีตัวอักษร */
@@ -442,6 +442,7 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
             /* สีฟ้าเข้มขึ้นเมื่อ hover */
             transform: scale(1.05);
             /* ขยายเล็กน้อยเมื่อ hover */
+            color: #ffffff;
         }
 
         .btn-details:active {
@@ -459,6 +460,23 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             /* เพิ่มเอฟเฟกต์การเปลี่ยนแปลง */
         }
+
+        /* ปรับ select ให้มี caret สามเหลี่ยม */
+        select.form-control {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='18' viewBox='0 0 20 20' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M5.516 7.548a.625.625 0 0 1 .884-.032l3.6 3.375 3.6-3.375a.625.625 0 1 1 .852.916l-4.025 3.775a.625.625 0 0 1-.852 0l-4.025-3.775a.625.625 0 0 1-.032-.884z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.2em;
+            padding-right: 2.5em;
+        }
+
+        .page-title {
+            color:#00008B ;
+        }
+        
     </style>
 </head>
 
@@ -470,47 +488,32 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
 
     <!-- Main Content -->
     <div class="container mt-4">
-        <h2 class="text-center">ตรวจสอบเอกสารจิตอาสา</h2>
-        <p class="text-center">ข้อมูลเอกสารที่ส่งเข้ามาในระบบ</p>
+        <h2 class="page-title">ตรวจสอบเอกสารจิตอาสา</h2>
+        <p class="page-desc">ข้อมูลเอกสารที่ส่งเข้ามาในระบบ</p>
 
-        <!-- Cards -->
-        <div class="row mb-4">
-            <!-- Card: ยังไม่ตรวจ -->
-            <div class="col-md-6">
-                <div class="card text-center bg-warning text-white <?php echo (isset($_GET['status']) && $_GET['status'] === 'unchecked') ? 'card-selected' : ''; ?>" onclick="window.location.href='?status=unchecked'">
-                    <div class="card-body">
-                        <h5 class="card-title">ยังไม่ตรวจ</h5>
-                        <h3 class="card-text">
-                            <?php
-                            $unchecked_sql = "SELECT COUNT(*) AS total_unchecked FROM new_user_activities WHERE status = 'unchecked'";
-                            $unchecked_result = $conn->query($unchecked_sql);
-                            $total_unchecked = $unchecked_result->fetch_assoc()['total_unchecked'] ?? 0;
-                            echo $total_unchecked . " รายการ";
-                            ?>
-                        </h3>
-                        <small class="text-muted">เอกสารที่ยังไม่ได้รับการตรวจสอบ</small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card: ตรวจแล้ว -->
-            <div class="col-md-6">
-                <div class="card text-center bg-success text-white <?php echo (isset($_GET['status']) && $_GET['status'] === 'checked') ? 'card-selected' : ''; ?>" onclick="window.location.href='?status=checked'">
-                    <div class="card-body">
-                        <h5 class="card-title">ตรวจแล้ว</h5>
-                        <h3 class="card-text">
-                            <?php
-                            $checked_sql = "SELECT COUNT(*) AS total_checked FROM new_user_activities WHERE status = 'checked'";
-                            $checked_result = $conn->query($checked_sql);
-                            $total_checked = $checked_result->fetch_assoc()['total_checked'] ?? 0;
-                            echo $total_checked . " รายการ";
-                            ?>
-                        </h3>
-                        <small class="text-muted">เอกสารที่ได้รับการตรวจสอบแล้ว</small>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Tabs -->
+        <ul class="nav nav-tabs justify-content-start ps-2 mb-4" id="statusTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link <?php echo (!isset($_GET['status']) || $_GET['status'] === 'unchecked') ? 'active' : ''; ?>"
+                   href="?status=unchecked<?php
+                        if (!empty($selected_year)) echo '&year=' . urlencode($selected_year);
+                        if (!empty($selected_term)) echo '&terms=' . urlencode($selected_term);
+                        if (!empty($_GET['username'])) echo '&username=' . urlencode($_GET['username']);
+                   ?>">
+                    ยังไม่ตรวจ
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link <?php echo (isset($_GET['status']) && $_GET['status'] === 'checked') ? 'active' : ''; ?>"
+                   href="?status=checked<?php
+                        if (!empty($selected_year)) echo '&year=' . urlencode($selected_year);
+                        if (!empty($selected_term)) echo '&terms=' . urlencode($selected_term);
+                        if (!empty($_GET['username'])) echo '&username=' . urlencode($_GET['username']);
+                   ?>">
+                    ตรวจแล้ว
+                </a>
+            </li>
+        </ul>
 
         <!-- Filters -->
         <div class="row mb-4">
@@ -555,6 +558,26 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
                 </form>
             </div>
         </div>
+
+        <?php if (!isset($_GET['status']) || $_GET['status'] === 'unchecked'): ?>
+            <!-- การ์ดสรุปจำนวน: ยังไม่ตรวจ -->
+            <div class="mb-3">
+                <div class="summary-card bg-warning text-dark d-flex flex-column align-items-center justify-content-center py-3 rounded shadow-sm">
+                    <div class="fs-4 fw-bold">ยังไม่ตรวจ</div>
+                    <div class="fs-2 fw-bold"><?php echo $unchecked_count; ?></div>
+                    <div class="small">รายการที่ยังไม่ได้รับการตรวจสอบ</div>
+                </div>
+            </div>
+        <?php elseif ($_GET['status'] === 'checked'): ?>
+            <!-- การ์ดสรุปจำนวน: ตรวจแล้ว -->
+            <div class="mb-3">
+                <div class="summary-card bg-success text-white d-flex flex-column align-items-center justify-content-center py-3 rounded shadow-sm">
+                    <div class="fs-4 fw-bold">ตรวจแล้ว</div>
+                    <div class="fs-2 fw-bold"><?php echo $checked_count; ?></div>
+                    <div class="small">รายการที่ตรวจสอบแล้ว</div>
+                </div>
+            </div>
+        <?php endif; ?>
 
         <table class="table table-bordered">
             <thead>
@@ -729,3 +752,31 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
 </body>
 
 </html>
+<!-- เพิ่ม CSS สำหรับ tab -->
+<style>
+    .nav-tabs .nav-link {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #495057;
+        border: 1px solid #dee2e6;
+        border-bottom: none;
+        background: #f8f9fa;
+        margin-right: 2px;
+        border-radius: 8px 8px 0 0;
+        transition: background 0.2s, color 0.2s;
+    }
+    .nav-tabs .nav-link.active {
+        background: #fff;
+        color: #FC6600;
+        border-bottom: 2px solid #fff;
+        border-top: 3px solid #FC6600;
+        border-right: 1px solid #dee2e6;
+        border-left: 1px solid #dee2e6;
+        font-weight: bold;
+    }
+    .nav-tabs .badge {
+        margin-left: 6px;
+        font-size: 1rem;
+        vertical-align: middle;
+    }
+</style>

@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_teacher'])) {
         table th {
             background: #e67d57;
             /* สีส้มแดง */
-            color: #495057;
+            color: #00008B;
             font-weight: bold;
             text-align: center;
         }
@@ -256,6 +256,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_teacher'])) {
             /* สีส้ม */
             color: white;
         }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00008B;
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+
+        .page-desc {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
     </style>
 </head>
 
@@ -267,8 +282,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_teacher'])) {
 
     <!-- Main Content -->
     <div class="container mt-5">
-        <h2 class="text-center">ข้อมูลอาจารย์</h2>
-        <p class="text-center text-muted">รายละเอียดข้อมูลอาจารย์</p>
+        <h2 class="page-title">ข้อมูลอาจารย์</h2>
+        <p class="page-desc">รายละเอียดข้อมูลอาจารย์</p>
 
         <!-- ปุ่มเปิด Modal -->
         <div class="mb-3 text-end">

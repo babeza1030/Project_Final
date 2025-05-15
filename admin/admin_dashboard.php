@@ -49,15 +49,6 @@ $faculty_result = $conn->query($faculty_sql);
             width: calc(100% - 250px);
         }
 
-        .box_head {
-            background: #F17629;
-            color: white;
-            padding: 15px;
-            text-align: right;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 5px;
-        }
 
         .status-container {
             display: flex;
@@ -104,44 +95,42 @@ $faculty_result = $conn->query($faculty_sql);
         }
 
         .table th {
-            background-color: #f17629;
-            color: white;
+            background-color: #fff;
+            color: #00008B;
+            font-weight: bold;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00008B;
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+        .page-desc {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 1.5rem;
+            text-align: left;
         }
     </style>
 </head>
 
+
+
 <body>
 
+<?php include('../admin/admin_sidebar.php'); ?>
 
-    <?php include('../admin/admin_sidebar.php'); ?>
+<?php include('../admin/admin_header.php'); ?>
 
     <!-- Main Content -->
     <div class="main-content">
-        <?php include('../admin/admin_header.php'); ?>
         <div class="container mt-4">
-            <h2 class="text-center">ตรวจสอบสถานะผู้กู้</h2>
-            <p class="text-center">ข้อมูลนักศึกษาที่ลงทะเบียนในระบบ</p>
+            <h2 class="page-title">ตรวจสอบสถานะผู้กู้</h2>
+            <p class="page-desc">ข้อมูลนักศึกษาที่ลงทะเบียนในระบบ</p>
             <div class="dashboard text-center">
 
-                <!-- <h1>Admin Dashboard</h1> -->
-
-                <!-- การ์ดสถานะ
-                <div class="status-container">
-                    <div class="status-card pending">
-                        <h3>รอดำเนินการ</h3>
-                        <p>กำลังเตรียมเอกสารและส่งข้อมูล</p>
-                    </div>
-
-                    <div class="status-card in-review">
-                        <h3>กำลังตรวจสอบ</h3>
-                        <p>เจ้าหน้าที่กำลังพิจารณาเอกสาร</p>
-                    </div>
-
-                    <div class="status-card approved">
-                        <h3>อนุมัติแล้ว</h3>
-                        <p>ได้รับอนุมัติเรียบร้อย สามารถดำเนินการต่อ</p>
-                    </div>
-                </div> -->
 
                 <!-- ค้นหา -->
                 <div class="search-container">

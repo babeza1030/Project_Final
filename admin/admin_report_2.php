@@ -142,12 +142,14 @@ if ($result->num_rows > 0) {
 
         .box h2 {
             margin-bottom: 20px;
-            color: #333;
+            color: #00008B;
+            font-weight: bold;
         }
 
         .table th {
-            background-color: #f17629;
-            color: white;
+            background-color: #f9f9f9;
+            color: #00008B;
+            font-weight: bold;
         }
 
         .branch-row {
@@ -170,6 +172,16 @@ if ($result->num_rows > 0) {
             width: 100%;
             max-width: 600px;
         }
+
+        .box.chart-container {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+        }
     </style>
 </head>
 
@@ -181,54 +193,44 @@ if ($result->num_rows > 0) {
 
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Form สำหรับเลือกปีและเทอม -->
-        <form method="GET" class="mb-3">
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="year" class="form-label">เลือกปี</label>
-                    <select name="year" id="year" class="form-select">
-                        <?php
-                        // ดึงปีปัจจุบัน
-                        $currentYear = date("Y");
-
-                        // สร้างตัวเลือกปีจาก start_date
-                        $yearsQuery = "SELECT DISTINCT YEAR(start_date) AS year FROM new_user_activities ORDER BY year DESC";
-                        $yearsResult = $conn->query($yearsQuery);
-
-                        // เพิ่มตัวเลือกปีปัจจุบันเป็นค่าเริ่มต้น
-                        echo "<option value='$currentYear' " . (!isset($_GET['year']) || $_GET['year'] == $currentYear ? 'selected' : '') . "> ปีปัจจุบัน ($currentYear) </option>";
-
-                        // แสดงปีทั้งหมดจากฐานข้อมูล
-                        while ($yearRow = $yearsResult->fetch_assoc()) {
-                            $selected = (isset($_GET['year']) && $_GET['year'] == $yearRow['year']) ? 'selected' : '';
-                            echo "<option value='{$yearRow['year']}' $selected>{$yearRow['year']}</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="term" class="form-label">เลือกเทอม</label>
-                    <select name="term" id="term" class="form-select">
-                        <?php
-                        // ดึงเทอมปัจจุบัน (สมมติว่าเทอม 1 คือเดือน ม.ค.-มิ.ย. และเทอม 2 คือเดือน ก.ค.-ธ.ค.)
-                        $currentMonth = date("n");
-                        $currentTerm = ($currentMonth >= 1 && $currentMonth <= 6) ? 1 : 2;
-
-                        // เพิ่มตัวเลือกเทอมปัจจุบันเป็นค่าเริ่มต้น
-                        echo "<option value='1' " . (!isset($_GET['term']) || $_GET['term'] == '1' ? 'selected' : '') . ">1</option>";
-                        echo "<option value='2' " . ($_GET['term'] == '2' ? 'selected' : '') . ">2</option>";
-                        ?>
-                    </select>
-                </div>
-            </div>
-            <button type="submit" class="btn btn-primary mt-3">กรองข้อมูล</button>
-        </form>
-
-
-
-        <!-- Box: ตารางรายงานสรุปจิตอาสา -->
         <div class="box">
             <h2>ตารางรายงานสรุปจิตอาสา</h2>
+            <!-- ย้ายฟอร์มเลือกปี/เทอมมาไว้ใน box นี้ -->
+            <form method="GET" class="mb-3">
+                <div class="row align-items-end">
+                    <div class="col-md-4">
+                        <label for="year" class="form-label">เลือกปี</label>
+                        <select name="year" id="year" class="form-select">
+                            <?php
+                            $currentYear = date("Y");
+                            $yearsQuery = "SELECT DISTINCT YEAR(start_date) AS year FROM new_user_activities ORDER BY year DESC";
+                            $yearsResult = $conn->query($yearsQuery);
+                            echo "<option value='$currentYear' " . (!isset($_GET['year']) || $_GET['year'] == $currentYear ? 'selected' : '') . "> ปีปัจจุบัน ($currentYear) </option>";
+                            while ($yearRow = $yearsResult->fetch_assoc()) {
+                                $selected = (isset($_GET['year']) && $_GET['year'] == $yearRow['year']) ? 'selected' : '';
+                                echo "<option value='{$yearRow['year']}' $selected>{$yearRow['year']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="term" class="form-label">เลือกเทอม</label>
+                        <select name="term" id="term" class="form-select">
+                            <?php
+                            $currentMonth = date("n");
+                            $currentTerm = ($currentMonth >= 1 && $currentMonth <= 6) ? 1 : 2;
+                            echo "<option value='1' " . (!isset($_GET['term']) || $_GET['term'] == '1' ? 'selected' : '') . ">1</option>";
+                            echo "<option value='2' " . ($_GET['term'] == '2' ? 'selected' : '') . ">2</option>";
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button type="submit" class="btn w-100" style="background-color: #00008B; color: #fff; border: none;">
+                            กรองข้อมูล
+                        </button>
+                    </div>
+                </div>
+            </form>
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -255,7 +257,7 @@ if ($result->num_rows > 0) {
         </div>
 
         <!-- กราฟสรุปจิตอาสา -->
-        <div class="chart-container">
+        <div class="box chart-container">
             <h2>กราฟสรุปจิตอาสา</h2>
             <canvas id="volunteerChart"></canvas>
         </div>

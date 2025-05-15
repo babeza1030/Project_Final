@@ -79,24 +79,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <style>
         /* ตั้งค่าเนื้อหาหลัก */
 
-        .box_head {
+        /* .box_head {
             background-color: #602800;
             color: white;
             padding: 10px;
             text-align: center;
             font-size: 20px;
             font-weight: bold;
-        }
+        } */
 
         .main-content {
-            margin-left: 270px;
+            margin-left: 250px;
             padding: 20px;
-            width: calc(100% - 270px);
-            background-color: #f9f9f9;
+            width: calc(100% - 250px);
             min-height: 100vh;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
+            box-sizing: border-box;
         }
+
 
         /* หัวข้อ */
         h2.text-center {
@@ -130,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         .btn-add-student-short:hover {
-            background-color: #ddd;
+            background-color: while;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
             transform: translateY(-1px);
             color: #00008B;
@@ -150,18 +149,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             width: 100%;
             margin-top: 10px;
             border-collapse: collapse;
-            background-color: white;
+            background-color: #fff; /* พื้นหลังขาว */
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .table th {
-            background-color: #f9f9f9;
-            color: #495057;
+            background-color: #fff;
+            color: #00008B;
             text-transform: uppercase;
-            font-size: 14px;
+            font-size: 18px;   /* เพิ่มขนาดหัวตาราง */
             font-weight: bold;
+            padding-top: 16px;
+            padding-bottom: 16px;
         }
 
         .table td {
@@ -171,12 +172,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 14px;
         }
 
-
+        .table-striped > tbody > tr {
+            background-color: #fff !important; /* ไม่มีสลับสี */
+        }
 
         /* ปุ่มแก้ไข */
         .btn-edit {
-            background-color: #f17629;
-            color: white;
+            background-color: #f1c40f ;
+            color: #fff;
             padding: 8px 15px;
             border-radius: 5px;
             font-size: 14px;
@@ -185,13 +188,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         .btn-edit:hover {
-            background-color: #e65c00;
+            background-color: #f1c40f;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            color: #333;
         }
 
         /* ปุ่มดูรายละเอียด */
         .btn-view {
-            background-color: #17a2b8;
+            background-color: #2ecc71;
             color: white;
             padding: 8px 15px;
             border-radius: 5px;
@@ -201,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         .btn-view:hover {
-            background-color: #138496;
+            background-color: #2ecc71;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
 
@@ -229,17 +233,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <?php include('../admin/admin_header.php'); ?>
-
 <body>
-
     <?php include('../admin/admin_sidebar.php'); ?>
 
+    <div class="main-content ">
 
-    <!-- Main Content -->
-    <div class="main-content">
-
-        <h2 class="text-center">ข้อมูลนักศึกษา</h2>
-        <p class="text-center text-muted">รายละเอียดข้อมูลนักศึกษา</p>
+        <div class="mb-4">
+            <h2 class="page-title mb-1" style="font-size:2rem; font-weight:bold; color:#00008B; margin-bottom:0;">ข้อมูลนักศึกษา</h2>
+            <p class="page-desc" style="font-size:1.1rem; color:#6c757d;">รายละเอียดข้อมูลนักศึกษา</p>
+            <!-- <hr style="border-top:2px solid #FC6600; width:60px; margin:0;"> -->
+        </div>
 
         <!-- ปุ่มเพิ่มข้อมูลนักศึกษา -->
         <div class="text-end mb-3">

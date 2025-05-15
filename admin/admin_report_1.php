@@ -138,12 +138,14 @@ if ($result->num_rows > 0) {
 
         .box h2 {
             margin-bottom: 20px;
-            color: #333;
+            color: #00008B;
+            font-weight: bold;
         }
 
         .table th {
-            background-color: #f17629;
-            color: white;
+            background-color: #f9f9f9;
+            color:#00008B;
+            font-weight: bold;
         }
 
         .branch-row {
@@ -166,6 +168,18 @@ if ($result->num_rows > 0) {
             width: 100%;
             max-width: 600px;
         }
+
+        .faculty-divider {
+            border-bottom: 3px solid #495057;
+            height: 0;
+            padding: 0;
+            background: none;
+        }
+        .faculty-name {
+            font-weight: bold;
+            color: #495057;
+            font-size: 1.08em;
+        }
     </style>
 </head>
 
@@ -184,6 +198,7 @@ if ($result->num_rows > 0) {
         <!-- Box: ตารางสรุปผู้กู้ กยศ. -->
         <div class="box">
             <h2>ตารางสรุปผู้กู้ กยศ.</h2>
+            <p class="page-desc" style="font-size:1.1rem; color:#6c757d;">รายละเอียดสรุปรายงานรายชื่อผู้ยื่นกู้</p>
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -196,9 +211,23 @@ if ($result->num_rows > 0) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($loanSummary as $row): ?>
+                    <?php
+                    $last_faculty = null;
+                    foreach ($loanSummary as $row):
+                        // ถ้าเปลี่ยนคณะ (และไม่ใช่แถวแรก) ให้แทรกเส้นแบ่ง
+                        if ($last_faculty !== null && $last_faculty !== $row['faculty_name']) {
+                            echo '<tr><td colspan="6" class="faculty-divider"></td></tr>';
+                        }
+                    ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($row['faculty_name']); ?></td>
+                            <td>
+                                <?php
+                                if ($last_faculty !== $row['faculty_name']) {
+                                    echo '<span class="faculty-name">'.htmlspecialchars($row['faculty_name']).'</span>';
+                                    $last_faculty = $row['faculty_name'];
+                                }
+                                ?>
+                            </td>
                             <td><?php echo htmlspecialchars($row['department_name']); ?></td>
                             <td><?php echo htmlspecialchars($row['year_1']); ?></td>
                             <td><?php echo htmlspecialchars($row['year_2']); ?></td>
