@@ -51,7 +51,7 @@ if (empty($selected_term)) {
 $sql = "
     SELECT 
         nau.id, 
-        stu.student_code AS username,
+        nau.student_code AS username,  
         stu.f_name, 
         stu.l_name,
         nau.activity_name, 
@@ -66,7 +66,7 @@ $sql = "
     FROM 
         new_user_activities nau
     LEFT JOIN 
-        student stu ON nau.username = stu.student_id
+        student stu ON nau.student_code = stu.student_code 
     LEFT JOIN 
         activities act ON nau.activity_id = act.id
     LEFT JOIN 
@@ -131,15 +131,53 @@ $stmt->execute();
 // ดึงผลลัพธ์
 $result = $stmt->get_result();
 
-// Query สำหรับนับเอกสารที่ตรวจแล้วและยังไม่ตรวจ
-$checked_count_sql = "SELECT COUNT(*) AS checked_count FROM new_user_activities WHERE status = 'checked'";
-$unchecked_count_sql = "SELECT COUNT(*) AS unchecked_count FROM new_user_activities WHERE status = 'unchecked'";
+// Query สำหรับนับเอกสารที่ตรวจแล้วและยังไม่ตรวจ (กรองตามปีและเทอม)
+$count_params = [];
+$count_types = "";
+$count_where = "";
 
-$checked_count_result = $conn->query($checked_count_sql);
-$unchecked_count_result = $conn->query($unchecked_count_sql);
+if (!empty($selected_year)) {
+    $count_where .= " AND yt.year = ?";
+    $count_params[] = $selected_year;
+    $count_types .= "s";
+}
+if (!empty($selected_term)) {
+    $count_where .= " AND yt.terms = ?";
+    $count_params[] = $selected_term;
+    $count_types .= "s";
+}
 
+$checked_count_sql = "
+    SELECT COUNT(*) AS checked_count
+    FROM new_user_activities nau
+    LEFT JOIN year_table yt ON nau.year_id = yt.year_id
+    WHERE nau.status = 'checked' $count_where
+";
+$unchecked_count_sql = "
+    SELECT COUNT(*) AS unchecked_count
+    FROM new_user_activities nau
+    LEFT JOIN year_table yt ON nau.year_id = yt.year_id
+    WHERE nau.status = 'unchecked' $count_where
+";
+
+$checked_count_stmt = $conn->prepare($checked_count_sql);
+$unchecked_count_stmt = $conn->prepare($unchecked_count_sql);
+
+if (!empty($count_params)) {
+    $checked_count_stmt->bind_param($count_types, ...$count_params);
+    $unchecked_count_stmt->bind_param($count_types, ...$count_params);
+}
+
+$checked_count_stmt->execute();
+$checked_count_result = $checked_count_stmt->get_result();
 $checked_count = $checked_count_result->fetch_assoc()['checked_count'] ?? 0;
+
+$unchecked_count_stmt->execute();
+$unchecked_count_result = $unchecked_count_stmt->get_result();
 $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 0;
+
+$checked_count_stmt->close();
+$unchecked_count_stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -540,6 +578,9 @@ $unchecked_count = $unchecked_count_result->fetch_assoc()['unchecked_count'] ?? 
                         <label for="username" class="form-label">ชื่อผู้ใช้:</label>
                         <input type="text" name="username" id="username" class="form-control" placeholder="ค้นหาชื่อผู้ใช้" value="<?php echo htmlspecialchars($_GET['username'] ?? ''); ?>">
                     </div>
+
+                    <!-- เพิ่ม hidden input สำหรับ status -->
+                    <input type="hidden" name="status" value="<?php echo isset($_GET['status']) ? htmlspecialchars($_GET['status']) : 'unchecked'; ?>">
 
                     <!-- ปุ่มค้นหา -->
                     <div class="col-md-2 text-end">

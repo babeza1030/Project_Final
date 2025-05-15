@@ -73,7 +73,7 @@ if (!isset($_SESSION['username'])) {
         <li><a href="admin_dashboard.php"><i class="bi bi-house"></i> หน้าหลัก (Dashboard)</a></li>
         <li><a href="admin_edit_student.php"><i class="bi bi-person"></i> ข้อมูลนักศึกษา</a></li>
         <li><a href="admin_edit_teacher.php"><i class="bi bi-briefcase"></i> ข้อมูลอาจารย์</a></li>
-        <li><a href="admin_Check_document_status.php"><i class="bi bi-file-text"></i> ตรวจสอบเอกสารจิตอาสา</a></li>
+        <li><a href="admin_Check_document_status.php?year=2025&terms=1&username=&status=unchecked"><i class="bi bi-file-text"></i> ตรวจสอบเอกสารจิตอาสา</a></li>
         <li><a href="admin_report_1.php"><i class="bi bi-bar-chart"></i> ตารางสรุปผู้กู้ กยศ.</a></li>
         <li><a href="admin_report_2.php"><i class="bi bi-clipboard-data"></i> ตารางรายงานสรุป จิตอาสา</a></li>
         <li><a href="admin_add_year.php"><i class="bi bi-clipboard-data"></i>เพิ่มปีการศึกษา</a></li>

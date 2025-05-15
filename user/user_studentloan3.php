@@ -72,9 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($uploadOk == 1) {
         if (move_uploaded_file($_FILES["activity_image"]["tmp_name"], $target_file)) {
-            // เพิ่ม year_id และ student_code ในการบันทึกข้อมูล
-            $stmt = $conn->prepare("INSERT INTO new_user_activities (username, student_code, activity_id, activity_name, location, details, image_path, year_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssissssi", $username, $student_code, $activity_id, $activity_name, $location, $details, $target_file, $year_id);
+            // เพิ่ม username ในการบันทึกข้อมูล
+            $stmt = $conn->prepare("INSERT INTO new_user_activities (student_code, username, activity_id, activity_name, location, details, image_path, year_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssissssi", $student_code, $username, $activity_id, $activity_name, $location, $details, $target_file, $year_id);
             if ($stmt->execute()) {
                 echo "<script>alert('บันทึกข้อมูลสำเร็จ'); window.location.href='user_studentloan1.php';</script>";
             } else {
