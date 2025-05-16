@@ -88,6 +88,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-weight: bold;
         } */
 
+        .container {
+            margin-left: 260px;
+            /* ชดเชยพื้นที่ของ Sidebar */
+            padding: 20px;
+            background: #FFFFFF;
+            /* สีขาว */
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: calc(100% - 280px);
+            /* ปรับความกว้างให้สมดุลกับ Sidebar */
+            margin-top: 20px;
+            color: #333333;
+            /* สีข้อความหลัก */
+        }
+        
         .main-content {
             margin-left: 250px;
             padding: 20px;

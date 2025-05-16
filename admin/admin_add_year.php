@@ -34,19 +34,50 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>เพิ่มปีการศึกษา</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
-<body>
-    <h2>เพิ่มปีการศึกษา</h2>
-    <form method="post">
-        <label>ปีการศึกษา:</label>
-        <input type="text" name="year" required><br><br>
-        <label>วันที่เริ่มต้น:</label>
-        <input type="datetime-local" name="data_start" required><br><br>
-        <label>วันที่สิ้นสุด:</label>
-        <input type="datetime-local" name="data_end" required><br><br>
-        <label>เทอม:</label>
-        <input type="number" name="terms" required><br><br>
-        <button type="submit">บันทึก</button>
-    </form>
+
+<?php include('../admin/admin_sidebar.php'); ?>
+
+<?php include('../admin/admin_header.php'); ?>
+
+<body style="background: #f6f8fa;">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-6">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-4">
+                        <h2 class="mb-4 text-center font-bold" style="color:#00008B;">เพิ่มปีการศึกษา</h2>
+
+                        <form method="post">
+                            <div class="mb-3">
+                                <label class="form-label">ปีการศึกษา:</label>
+                                <input type="text" name="year" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">วันที่เริ่มต้น:</label>
+                                <input type="datetime-local" name="data_start" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">วันที่สิ้นสุด:</label>
+                                <input type="datetime-local" name="data_end" class="form-control" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">เทอม:</label>
+                                <input type="number" name="terms" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn w-100" style="background-color: #00008B; color: white;">บันทึก</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

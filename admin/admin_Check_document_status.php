@@ -593,7 +593,7 @@ $unchecked_count_stmt->close();
         <?php if (!isset($_GET['status']) || $_GET['status'] === 'unchecked'): ?>
             <!-- การ์ดสรุปจำนวน: ยังไม่ตรวจ -->
             <div class="mb-3">
-                <div class="summary-card  text-dark d-flex flex-column align-items-center justify-content-center py-3 rounded shadow-sm" style="background: linear-gradient(90deg,rgb(248, 109, 16) 25%,rgb(243, 122, 42) 100%);">
+                <div class="summary-card  text-dark d-flex flex-column align-items-center justify-content-center py-3 rounded shadow-sm" style="background:  #f1c40f;">
                     <div class="fs-4 fw-bold">ยังไม่ตรวจ</div>
                     <div class="fs-2 fw-bold"><?php echo $unchecked_count; ?></div>
                     <div class="small">รายการที่ยังไม่ได้รับการตรวจสอบ</div>
@@ -602,7 +602,7 @@ $unchecked_count_stmt->close();
         <?php elseif ($_GET['status'] === 'checked'): ?>
             <!-- การ์ดสรุปจำนวน: ตรวจแล้ว -->
             <div class="mb-3">
-                <div class="summary-card bg-success text-white d-flex flex-column align-items-center justify-content-center py-3 rounded shadow-sm" style="background: linear-gradient(90deg,rgb(2, 179, 40) 25%,rgb(4, 148, 35) 100%);">
+                <div class="summary-card bg-success text-white d-flex flex-column align-items-center justify-content-center py-3 rounded shadow-sm" style="background: rgb(2, 179, 40);">
                     <div class="fs-4 fw-bold">ตรวจแล้ว</div>
                     <div class="fs-2 fw-bold"><?php echo $checked_count; ?></div>
                     <div class="small">รายการที่ตรวจสอบแล้ว</div>
