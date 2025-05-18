@@ -10,10 +10,15 @@ if (!isset($_SESSION['username'])) {
 
 // ถ้ามีการ submit ฟอร์ม
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $year = $_POST['year'];
-    $data_start = $_POST['data_start'];
-    $data_end = $_POST['data_end'];
+    // แปลงปี พ.ศ. เป็น ค.ศ.
+    $year = $_POST['year'] - 543; // แปลง พ.ศ. เป็น ค.ศ.
+    $data_start = str_replace('-', '-', $_POST['data_start']);
+    $data_end = str_replace('-', '-', $_POST['data_end']);
     $terms = $_POST['terms'];
+
+    // แปลงวันที่เริ่มต้นและสิ้นสุดจาก พ.ศ. เป็น ค.ศ.
+    $data_start = date("Y-m-d\TH:i", strtotime($_POST['data_start'] . " -543 years"));
+    $data_end = date("Y-m-d\TH:i", strtotime($_POST['data_end'] . " -543 years"));
 
     $sql = "INSERT INTO year_table (year, data_start, data_end, terms) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
@@ -36,14 +41,28 @@ $conn->close();
     <title>เพิ่มปีการศึกษา</title>
     <link rel="stylesheet" href="../static/css/style.css">
     <link rel="stylesheet" href="../static/css/bootstrap.css">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // แปลงปีใน input[type="datetime-local"] เป็น พ.ศ. ก่อนแสดง
+        document.addEventListener("DOMContentLoaded", function () {
+            const startInput = document.querySelector('input[name="data_start"]');
+            const endInput = document.querySelector('input[name="data_end"]');
 
+            if (startInput && startInput.value) {
+                const startDate = new Date(startInput.value);
+                startDate.setFullYear(startDate.getFullYear() + 543); // แปลง ค.ศ. เป็น พ.ศ.
+                startInput.value = startDate.toISOString().slice(0, 16);
+            }
+
+            if (endInput && endInput.value) {
+                const endDate = new Date(endInput.value);
+                endDate.setFullYear(endDate.getFullYear() + 543); // แปลง ค.ศ. เป็น พ.ศ.
+                endInput.value = endDate.toISOString().slice(0, 16);
+            }
+        });
+    </script>
 </head>
 
 <?php include('../admin/admin_sidebar.php'); ?>
-
 <?php include('../admin/admin_header.php'); ?>
 
 <body style="background: #f6f8fa;">
@@ -56,8 +75,12 @@ $conn->close();
 
                         <form method="post">
                             <div class="mb-3">
-                                <label class="form-label">ปีการศึกษา:</label>
-                                <input type="text" name="year" class="form-control" required>
+                                <label class="form-label">ปีการศึกษา (พ.ศ.):</label>
+                                <input type="number" name="year" class="form-control" required placeholder="เช่น 2568">
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">เทอม:</label>
+                                <input type="number" name="terms" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">วันที่เริ่มต้น:</label>
@@ -67,12 +90,8 @@ $conn->close();
                                 <label class="form-label">วันที่สิ้นสุด:</label>
                                 <input type="datetime-local" name="data_end" class="form-control" required>
                             </div>
-                            <div class="mb-4">
-                                <label class="form-label">เทอม:</label>
-                                <input type="number" name="terms" class="form-control" required>
-                            </div>
+                            
                             <button type="submit" class="btn w-100" style="background-color: #00008B; color: white;">บันทึก</button>
-
                         </form>
                     </div>
                 </div>

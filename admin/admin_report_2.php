@@ -175,17 +175,14 @@ if ($result->num_rows > 0) {
         .chart-container {
             margin-top: 40px;
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        .box.chart-container {
-            background: #ffffff;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            max-width: 100%;
+        canvas#volunteerChart {
+            display: block;
+            width: 100% !important;
+            height: auto !important;
         }
     </style>
 </head>
@@ -200,26 +197,27 @@ if ($result->num_rows > 0) {
     <div class="main-content">
         <div class="box">
             <h2>ตารางรายงานสรุปจิตอาสา</h2>
-            <!-- ย้ายฟอร์มเลือกปี/เทอมมาไว้ใน box นี้ -->
-            <form method="GET" class="mb-3">
-                <div class="row align-items-end">
-                    <div class="col-md-4">
-                        <label for="year" class="form-label"></label>
-                        <select name="year" id="year" class="form-select">
+            <p class="page-desc" style="font-size:1.1rem; color:#6c757d;">รายละเอียดสรุปรายงานกิจกรรมจิตสาธาณะ</p>
+            <!-- ฟอร์มเลือกปีและเทอม -->
+            <form method="GET" id="filterForm" class="mb-3">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="year" class="form-label">ปีการศึกษา:</label>
+                        <select name="year" id="year" class="form-select" onchange="document.getElementById('filterForm').submit();">
                             <?php
-                            // กำหนดปีปัจจุบันเป็น default หากไม่ได้เลือก
                             foreach ($yearsResult as $yearRow) {
+                                // แปลงปีค.ศ. เป็นปีพุทธศักราช
+                                $thaiYear = $yearRow['year'] + 543;
                                 $selected = (isset($_GET['year']) && $_GET['year'] == $yearRow['year']) || (!isset($_GET['year']) && $yearRow['year'] == $currentYear) ? 'selected' : '';
-                                echo "<option value='{$yearRow['year']}' $selected>{$yearRow['year']}</option>";
+                                echo "<option value='{$yearRow['year']}' $selected>{$thaiYear}</option>";
                             }
                             ?>
                         </select>
                     </div>
-                    <div class="col-md-4">
-                        <label for="terms" class="form-label"></label>
-                        <select name="terms" id="terms" class="form-select">
+                    <div class="col-6">
+                        <label for="terms" class="form-label">เทอม:</label>
+                        <select name="terms" id="terms" class="form-select" onchange="document.getElementById('filterForm').submit();">
                             <?php
-                            // กำหนดเทอมปัจจุบันเป็น default หากไม่ได้เลือก
                             $termOptions = [1, 2];
                             foreach ($termOptions as $term) {
                                 $selected = (isset($_GET['terms']) && $_GET['terms'] == $term) || (!isset($_GET['terms']) && $term == $currentTerm) ? 'selected' : '';
@@ -227,11 +225,6 @@ if ($result->num_rows > 0) {
                             }
                             ?>
                         </select>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <button type="submit" class="btn w-100" style="background-color: #00008B; color: #fff; border: none;">
-                            กรองข้อมูล
-                        </button>
                     </div>
                 </div>
             </form>
@@ -260,41 +253,99 @@ if ($result->num_rows > 0) {
             </div>
         </div>
 
+        <!-- โหลด Chart.js และ Chart.js Datalabels Plugin -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
         <!-- กราฟสรุปจิตอาสา -->
         <div class="box chart-container">
             <h2>กราฟสรุปจิตอาสา</h2>
-            <canvas id="volunteerChart"></canvas>
+            <div style="position: relative; width: 100%;">
+                <canvas id="volunteerChart"></canvas>
+            </div>
         </div>
-    </div>
 
-    <script>
-        // กราฟสรุปจิตอาสา
-        const volunteerData = <?php echo json_encode($activities); ?>;
+        <style>
+            .chart-container {
+                margin-top: 40px;
+                width: 100%;
+                max-width: 100%; /* ให้กราฟมีขนาดเต็มความกว้างของตาราง */
+                margin: 0 auto; /* จัดให้อยู่ตรงกลาง */
+                border: 1px solid #ddd; /* กรอบเหมือนตาราง */
+                border-radius: 10px; /* มุมโค้งเหมือนตาราง */
+                padding: 20px; /* ระยะห่างภายในกรอบ */
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* เงาเหมือนตาราง */
+                background: #ffffff; /* พื้นหลังสีขาว */
+            }
 
-        const volunteerCtx = document.getElementById('volunteerChart').getContext('2d');
-        const volunteerChart = new Chart(volunteerCtx, {
-            type: 'bar',
-            data: {
-                labels: volunteerData.map(activity => activity.activity_name),
-                datasets: [{
-                    label: 'จำนวนผู้เข้าร่วม',
-                    data: volunteerData.map(activity => activity.participants),
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
+            canvas#volunteerChart {
+                display: block;
+                width: 100% !important;
+                height: 400px !important; /* ความสูงของกราฟ */
+            }
+        </style>
+
+        <script>
+            // ตรวจสอบข้อมูลใน Console
+            console.log(<?php echo json_encode($activities); ?>);
+
+            // กราฟสรุปจิตอาสา
+            const volunteerData = <?php echo json_encode($activities); ?>;
+
+            const volunteerCtx = document.getElementById('volunteerChart').getContext('2d');
+            const volunteerChart = new Chart(volunteerCtx, {
+                type: 'pie', // เปลี่ยนจาก bar เป็น pie
+                data: {
+                    labels: volunteerData.map(activity => activity.activity_name), // ชื่อกิจกรรม
+                    datasets: [{
+                        label: 'จำนวนผู้เข้าร่วม',
+                        data: volunteerData.map(activity => activity.participants), // จำนวนผู้เข้าร่วม
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+                        ], // สีของแต่ละส่วนในกราฟ
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+            responsive: true,
+            maintainAspectRatio: false, // ปิดการรักษาสัดส่วน
+            plugins: {
+                legend: {
+                    position: 'top', // ตำแหน่งของคำอธิบาย
+                    labels: {
+                        font: {
+                            size: 14 // ขนาดตัวหนังสือใน Legend
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            const label = tooltipItem.label || '';
+                            const value = tooltipItem.raw || 0;
+                            return `${label}: ${value} คน`;
+                        }
+                    }
+                },
+                datalabels: {
+                    color: '#000', // สีของตัวเลข
+                    font: {
+                        size: 14, // ขนาดตัวเลข
+                        weight: 'bold'
+                    },
+                    formatter: function(value, context) {
+                        return value + ' คน'; // แสดงจำนวนพร้อมคำว่า "คน"
                     }
                 }
+            },
+            layout: {
+                padding: {
+                    top: 20,
+                    bottom: 20
+                }
             }
-        });
-    </script>
-
-</body>
-
-</html>
+        },
+        plugins: [ChartDataLabels] // เปิดใช้งาน DataLabels Plugin
+    });
+</script>
+                           

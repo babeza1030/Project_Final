@@ -91,13 +91,29 @@ if (!empty($selected_term)) {
     $types .= "s";
 }
 
-// เพิ่มเงื่อนไขกรองชื่อผู้ใช้, ชื่อ, และนามสกุล
-if (!empty($_GET['username'])) {
+// ตรวจสอบว่ามีการกรอกชื่อผู้ใช้หรือไม่
+$is_searching = !empty($_GET['username']);
+
+// ปรับ SQL Query ตามเงื่อนไข
+if ($is_searching) {
+    // กรณีค้นหาชื่อผู้ใช้
     $sql .= " AND (stu.student_code LIKE ? OR stu.f_name LIKE ? OR stu.l_name LIKE ?)";
     $params[] = '%' . $_GET['username'] . '%';
     $params[] = '%' . $_GET['username'] . '%';
     $params[] = '%' . $_GET['username'] . '%';
     $types .= "sss";
+} else {
+    // กรณีเลือกปีและเทอม (หรือไม่มีการกรอกอะไรเลย)
+    if (!empty($selected_year)) {
+        $sql .= " AND yt.year = ?";
+        $params[] = $selected_year;
+        $types .= "s";
+    }
+    if (!empty($selected_term)) {
+        $sql .= " AND yt.terms = ?";
+        $params[] = $selected_term;
+        $types .= "s";
+    }
 }
 
 // รับค่าจาก URL
@@ -546,24 +562,23 @@ $unchecked_count_stmt->close();
         <!-- Filters -->
         <div class="row mb-4">
             <div class="col-md-12">
-                <form method="GET" action="" class="row g-3 align-items-end">
-                    <!-- เลือกปี -->
-                    <div class="col-md-3">
-                        <label for="year" class="form-label">ปี:</label>
-                        <select name="year" id="year" class="form-control">
+                <form method="GET" action="" class="row g-3">
+                    <!-- เลือกปีและเทอมในบรรทัดเดียวกัน -->
+                    <div class="col-md-6">
+                        <label for="year" class="form-label">ปีการศึกษา:</label>
+                        <select name="year" id="year" class="form-control" onchange="this.form.submit();">
                             <option value="">-- เลือกปี --</option>
                             <?php foreach ($years as $year): ?>
+                                <?php $thaiYear = $year + 543; // แปลงปีค.ศ. เป็นปีพุทธศักราช ?>
                                 <option value="<?php echo $year; ?>" <?php echo ($selected_year == $year) ? 'selected' : ''; ?>>
-                                    <?php echo $year; ?>
+                                    <?php echo $thaiYear; ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
-
-                    <!-- เลือกเทอม -->
-                    <div class="col-md-3">
-                        <label for="terms" class="form-label">เทอม:</label> <!-- เปลี่ยน id และ name เป็น terms -->
-                        <select name="terms" id="terms" class="form-control">
+                    <div class="col-md-6">
+                        <label for="terms" class="form-label">เทอม:</label>
+                        <select name="terms" id="terms" class="form-control" onchange="this.form.submit();">
                             <option value="">-- เลือกเทอม --</option>
                             <?php foreach ($terms as $term): ?>
                                 <option value="<?php echo htmlspecialchars($term); ?>" <?php echo ($selected_term == $term) ? 'selected' : ''; ?>>
@@ -573,21 +588,19 @@ $unchecked_count_stmt->close();
                         </select>
                     </div>
 
-                    <!-- ค้นหาชื่อผู้ใช้ -->
-                    <div class="col-md-4">
+                    <!-- ค้นหาชื่อผู้ใช้และปุ่มค้นหาในบรรทัดเดียวกัน -->
+                    <div class="col-md-9">
                         <label for="username" class="form-label">ชื่อผู้ใช้:</label>
                         <input type="text" name="username" id="username" class="form-control" placeholder="ค้นหาชื่อผู้ใช้" value="<?php echo htmlspecialchars($_GET['username'] ?? ''); ?>">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">ค้นหา</button>
                     </div>
 
                     <!-- เพิ่ม hidden input สำหรับ status -->
                     <input type="hidden" name="status" value="<?php echo isset($_GET['status']) ? htmlspecialchars($_GET['status']) : 'unchecked'; ?>">
-
-                    <!-- ปุ่มค้นหา -->
-                    <div class="col-md-2 text-end">
-                        <button type="submit" class="btn btn-primary w-100">ค้นหา</button>
-                    </div>
                 </form>
-            </div>  
+            </div>
         </div>
 
         <?php if (!isset($_GET['status']) || $_GET['status'] === 'unchecked'): ?>
